@@ -18,6 +18,7 @@ public class Signup extends AppCompatActivity {
     EditText loginEdit;
     EditText passwordEdit;
     EditText passwordRepeatEdit;
+    private String url =  "http://biatoms.azurewebsites.net/api/BookStore/Register";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

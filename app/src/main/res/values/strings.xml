@@ -6,4 +6,7 @@
     <string name="repeatPass">Repeat Password</string>
     <string name="email">Email</string>
     <string name="Register">Register</string>
+    <string name="FirstName">First Name</string>
+    <string name="LastName">Last Name</string>
+    <string name="Username">Username</string>
 </resources>

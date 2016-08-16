@@ -35,7 +35,7 @@ public class Login extends AppCompatActivity {
     EditText passwordEdit;
     String KEY_USERNAME = "username";
     String KEY_PASSWORD = "password";
-    private String url = "http://amiraslan.azurewebsites.net/api/BookStore/Login";
+    private String url = "http://biatoms.azurewebsites.net/api/BookStore/Login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,10 @@ public class Login extends AppCompatActivity {
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params), new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            CommonMethods.showToast(response.toString(), context);
+                            boolean success = response.optBoolean("success");
+                            if(success){
+                                CommonMethods.showToast("success",context);
+                            }
                         }
                     }, new Response.ErrorListener() {
                         @Override

@@ -89,8 +89,6 @@ public class Signup extends AppCompatActivity {
                     CommonMethods.showToast("First Name is empty",context);
                 } else if(username.isEmpty()){
                     CommonMethods.showToast("Username is empty",context);
-                }else if(password.length()<=6){
-                    CommonMethods.showToast("Password must be at least 6 characters long",context);
                 } else if (!password.equals(repeatPassword)) {
                     //require mathing passwords
                     //if doesn't match, we will send toast!
@@ -119,7 +117,6 @@ public class Signup extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             VolleyLog.e("Error: ",error.getMessage());
-                            VolleyLog.e("Network: ",error.networkResponse.toString());
                         }
                     });
                     RequestQueue requestQueue = Volley.newRequestQueue(Signup.this);

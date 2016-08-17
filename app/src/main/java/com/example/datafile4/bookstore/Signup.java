@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -47,6 +48,7 @@ public class Signup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
 
         //enable back button in action bar
         ActionBar actionBar = getSupportActionBar();
@@ -118,7 +120,13 @@ public class Signup extends AppCompatActivity {
                         public void onErrorResponse(VolleyError error) {
                             VolleyLog.e("Error: ",error.getMessage());
                         }
-                    });
+                    }){
+                        @Override
+                        protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+
+                            return super.parseNetworkResponse(response);
+                        }
+                    };
                     RequestQueue requestQueue = Volley.newRequestQueue(Signup.this);
                     requestQueue.add(jsonObjectRequest);
                 }

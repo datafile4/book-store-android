@@ -45,10 +45,16 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         //hiding action bar in login
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
-
+        SharedPreferences settings = getPreferences(MODE_PRIVATE);
+        //if setting does not exists, getBoolean will return false
+        if(settings.getBoolean("logged_in",false)){
+            Intent intent = new Intent(Login.this,MainActivity.class);
+            startActivity(intent);
+        }
 
          /*login*/
         Button loginButton = (Button) findViewById(R.id.loginButton);
@@ -98,6 +104,8 @@ public class Login extends AppCompatActivity {
                                 editor.putString("cookie",m.group(1));
                             }
                             editor.putString("username",username);
+                            editor.putBoolean("logged_in",true);
+                            editor.commit();
                             return super.parseNetworkResponse(response);
                         }
                     };

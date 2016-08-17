@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_account_fragment"
+            android:title="@string/account"/>
+        <item
+            android:id="@+id/nav_books_fragment"
+            android:title="@string/books"/>
+        <item
+            android:id="@+id/nav_cart_fragment"
+            android:title="@string/cart"/>
+        <item
+            android:id="@+id/nav_logout_fragment"
+            android:title="@string/logout"/>
+    </group>
+</menu>

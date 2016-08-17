@@ -9,4 +9,14 @@
     <string name="FirstName">First Name</string>
     <string name="LastName">Last Name</string>
     <string name="Username">Username</string>
+
+
+    <string name="books">Books</string>
+    <string name="account">Account</string>
+    <string name="cart">Cart</string>
+    <string name="logout">Logout</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

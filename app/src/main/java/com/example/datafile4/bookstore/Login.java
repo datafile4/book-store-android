@@ -47,8 +47,8 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         //hiding action bar in login
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
+//        ActionBar actionBar = getSupportActionBar();
+//        actionBar.hide();
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
         //if setting does not exists, getBoolean will return false
         if(settings.getBoolean("logged_in",false)){

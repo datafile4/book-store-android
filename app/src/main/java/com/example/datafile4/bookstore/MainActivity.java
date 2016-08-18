@@ -1,5 +1,8 @@
 package com.example.datafile4.bookstore;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.design.widget.NavigationView;
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
     private Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+    private String PREF = "user_data";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,37 +86,42 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
-        Class fragmentClass;
-        switch(menuItem.getItemId()) {
-            case R.id.nav_account_fragment:
-                fragmentClass = AccountFragment.class;
-                break;
-            case R.id.nav_books_fragment:
-                fragmentClass = BooksFragment.class;
-                break;
-            case R.id.nav_cart_fragment:
-                fragmentClass = CartFragment.class;
-                break;
-            default:
-                fragmentClass = AccountFragment.class;
+
+        if(menuItem.getItemId() == R.id.nav_logout_fragment){
+            logoutFromApp();
+        } else {
+            Class fragmentClass;
+            switch(menuItem.getItemId()) {
+                case R.id.nav_account_fragment:
+                    fragmentClass = AccountFragment.class;
+                    break;
+                case R.id.nav_books_fragment:
+                    fragmentClass = BooksFragment.class;
+                    break;
+                case R.id.nav_cart_fragment:
+                    fragmentClass = CartFragment.class;
+                    break;
+                default:
+                    fragmentClass = AccountFragment.class;
+            }
+
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // Insert the fragment by replacing any existing fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+            // Highlight the selected item has been done by NavigationView
+            menuItem.setChecked(true);
+            // Set action bar title
+            setTitle(menuItem.getTitle());
+            // Close the navigation drawer
+            mDrawer.closeDrawers();
         }
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-        // Highlight the selected item has been done by NavigationView
-        menuItem.setChecked(true);
-        // Set action bar title
-        setTitle(menuItem.getTitle());
-        // Close the navigation drawer
-        mDrawer.closeDrawers();
     }
     private ActionBarDrawerToggle setupDrawerToggle() {
         return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
@@ -123,4 +132,15 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
     public void onFragmentInteraction(Uri uri){
 
     }
+    //Method that performs logout from app
+    public void logoutFromApp(){
+        SharedPreferences sharedPrefs = getSharedPreferences(PREF,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.clear();
+        editor.commit();
+
+        Intent intent = new Intent(MainActivity.this,Login.class);
+        startActivity(intent);
+    }
+
 }

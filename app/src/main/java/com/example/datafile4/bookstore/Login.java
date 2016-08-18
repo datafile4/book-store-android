@@ -39,7 +39,8 @@ public class Login extends AppCompatActivity {
     EditText passwordEdit;
     String KEY_USERNAME = "username";
     String KEY_PASSWORD = "password";
-    private String url = "http://biatoms.azurewebsites.net/api/BookStore/Login";
+    private String PREF = "user_data";
+    private String url = "https://amiraslan.azurewebsites.net/api/BookStore/Login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +50,12 @@ public class Login extends AppCompatActivity {
         //hiding action bar in login
 //        ActionBar actionBar = getSupportActionBar();
 //        actionBar.hide();
-        SharedPreferences settings = getPreferences(MODE_PRIVATE);
+        SharedPreferences settings = getSharedPreferences(PREF,Context.MODE_PRIVATE);
         //if setting does not exists, getBoolean will return false
-        if(settings.getBoolean("logged_in",false)){
+        if(settings.contains("cookie")){
             Intent intent = new Intent(Login.this,MainActivity.class);
             startActivity(intent);
-        }
+       }
 
          /*login*/
         Button loginButton = (Button) findViewById(R.id.loginButton);
@@ -79,10 +80,11 @@ public class Login extends AppCompatActivity {
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params), new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            boolean success = response.optBoolean("success");
-                            if(success){
-                                CommonMethods.showToast("success",context);
-                            }
+//                            boolean success = response.optBoolean("success");
+//                            if(success){
+//                                Intent intent = new Intent(Login.this,MainActivity.class);
+//                                startActivity(intent);
+//                            }
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -94,18 +96,22 @@ public class Login extends AppCompatActivity {
                         protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
                             Log.v("Cookie: ",response.headers.get("Set-Cookie"));
                             /*we must save user-g token in SharedPreferences*/
-                            SharedPreferences sharedPrefs = getPreferences(Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPrefs.edit();
                             String cookie = response.headers.get("Set-Cookie");
+                            if(!cookie.isEmpty()){
+                                SharedPreferences sharedPrefs = getSharedPreferences(PREF,Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPrefs.edit();
+
                             /*extact user-g with regex*/
-                            Pattern p = Pattern.compile("user-g=(.+?);");
-                            Matcher m = p.matcher(cookie);
-                            if(m.find()){
-                                editor.putString("cookie",m.group(1));
+                                Pattern p = Pattern.compile("user-g=(.+?);");
+                                Matcher m = p.matcher(cookie);
+                                if(m.find()){
+                                    editor.putString("cookie",m.group(1));
+                                }
+                                editor.putString("username",username);
+                                editor.apply();
+                                Intent intent = new Intent(Login.this,MainActivity.class);
+                                startActivity(intent);
                             }
-                            editor.putString("username",username);
-                            editor.putBoolean("logged_in",true);
-                            editor.commit();
                             return super.parseNetworkResponse(response);
                         }
                     };

@@ -1,9 +1,11 @@
 package com.example.datafile4.bookstore;
 
 import android.content.Context;
+
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,14 +37,14 @@ public class Signup extends AppCompatActivity {
     EditText lastNameEdit;
     EditText usernameEdit;
     //keys
-    String KEY_USERNAME="username";
-    String KEY_EMAIL="email";
-    String KEY_PASSWORD="password";
-    String KEY_LAST_NAME="lastname";
-    String KEY_FIRST_NAME="firstname";
+    private String KEY_USERNAME="username";
+    private String KEY_EMAIL="email";
+    private String KEY_PASSWORD="password";
+    private String KEY_LAST_NAME="lastname";
+    private String KEY_FIRST_NAME="firstname";
 
 
-    private String url =  "http://biatoms.azurewebsites.net/api/BookStore/Register";
+    private String url =  "https://amiraslan.azurewebsites.net/api/BookStore/Register";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +53,14 @@ public class Signup extends AppCompatActivity {
 
 
         //enable back button in action bar
-        ActionBar actionBar = getSupportActionBar();
+       ActionBar actionBar = getSupportActionBar();
         try{
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("Register");
         } catch (NullPointerException e){
             Log.e("Error: ", e.getMessage());
         }
+
 
         emailEdit = (EditText) findViewById(R.id.email_register);
         passwordEdit = (EditText) findViewById(R.id.password_register);

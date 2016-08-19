@@ -32,4 +32,12 @@ public class Book {
         uploader.mEmail = info.get("uEmail");
         uploader.mUsername = info.get("username");
     }
+
+    public String getBookName(){
+        return mName;
+    }
+
+    public String getBookImgUrl(){
+        return mImageUrl;
+    }
 }

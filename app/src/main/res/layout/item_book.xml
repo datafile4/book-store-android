@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/contact_photo"
+            android:id="@+id/book_image"
             android:layout_width="wrap_content"
             android:layout_height="100dp"
             android:contentDescription="@string/book_name"
@@ -22,14 +22,14 @@
             android:scaleType="fitXY" />
 
         <TextView
-            android:id="@+id/contact_name"
+            android:id="@+id/book_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="13sp"
             android:text="@string/book_name"
             android:textColor="@color/colorAccent"
             android:gravity="center"
-            android:layout_below="@+id/contact_photo"
+            android:layout_below="@+id/book_image"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:layout_alignParentBottom="true"

@@ -10,7 +10,7 @@
     <string name="LastName">Last Name</string>
     <string name="Username">Username</string>
 
-
+    <string name="book_name">Book Name</string>
     <string name="books">Books</string>
     <string name="account">Account</string>
     <string name="cart">Cart</string>

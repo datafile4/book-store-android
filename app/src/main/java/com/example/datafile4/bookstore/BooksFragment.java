@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -58,7 +59,6 @@ public class BooksFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
     public BooksFragment() {
         // Required empty public constructor
     }
@@ -85,6 +85,7 @@ public class BooksFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         books = new ArrayList<Book>();
+        mAdapter = new BookAdapter(getActivity(),books);
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -101,7 +102,6 @@ public class BooksFragment extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                 }
                 mAdapter.updateGrid(books);
             }
@@ -115,6 +115,12 @@ public class BooksFragment extends Fragment {
 //        requestQueue.add(jsonObjectRequest);
 
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonObjectRequest);
+        mAdapter.setOnItemClickListener(new BookAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                Log.d("Click","position" + position);
+            }
+        });
 
     }
 
@@ -129,10 +135,12 @@ public class BooksFragment extends Fragment {
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.rvBooks);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new GridLayoutManager(getActivity(),SPAN_COUNT);
-        mAdapter = new BookAdapter(getActivity(),books);
+
+
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(mLayoutManager);
 //        mAdapter.updateGrid(books);
+
         return rootView;
     }
 

@@ -16,7 +16,8 @@ import java.util.List;
  * Created by datafile4 on 8/19/16.
  */
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder>{
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public static ClickListener clickListener;
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView nameTextView;
         public NetworkImageView bookImage;
 
@@ -25,10 +26,23 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder>{
 
         public ViewHolder(View itemView){
             super(itemView);
+            itemView.setOnClickListener(this);
 
             nameTextView = (TextView)itemView.findViewById(R.id.book_name);
             bookImage = (NetworkImageView)itemView.findViewById(R.id.book_image);
         }
+
+        @Override
+        public void onClick(View view) {
+            clickListener.onItemClick(getAdapterPosition(),view);
+        }
+    }
+    public void setOnItemClickListener(ClickListener clickListener){
+        BookAdapter.clickListener = clickListener;
+    }
+
+    public interface ClickListener{
+        void onItemClick(int position, View v);
     }
     //Store a member variable for the books
     private List<Book> mBooks;
@@ -58,6 +72,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder>{
         return viewHolder;
     }
 
+
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         //Get the data model based on position
@@ -70,6 +86,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder>{
         final NetworkImageView image = holder.bookImage;
         ImageLoader mImageLoader = MySingleton.getInstance(mContext).getImageLoader();
         image.setImageUrl(book.getBookImgUrl(),mImageLoader);
+
+
     }
 
     public void updateGrid(List<Book> books){

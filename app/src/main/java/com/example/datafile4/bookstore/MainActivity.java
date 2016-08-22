@@ -46,6 +46,18 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
         setupDrawerContent(nvDrawer);
         // Tie DrawerLayout events to the ActionBarToggle
         mDrawer.addDrawerListener(drawerToggle);
+
+        //start the default fragment
+        Class defaultFragmentClass = BooksFragment.class;
+        try {
+            Fragment defaultFragment = (Fragment)defaultFragmentClass.newInstance();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().add(R.id.flContent, defaultFragment).commit();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

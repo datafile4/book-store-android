@@ -4,9 +4,26 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -18,6 +35,18 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class BooksFragment extends Fragment {
+    private String url = "https://amiraslan.azurewebsites.net/api/BookStore/GetAllBooks";
+    private String imgUrl = "https://amiraslan.azurewebsites.net/";
+
+    private ArrayList<Book> books;
+    private static final String TAG = "RecyclerViewFragment";
+    private static final String KEY_LAYOUT_MANAGER = "layoutManager";
+    private static final int SPAN_COUNT = 2;
+
+    protected RecyclerView mRecyclerView;
+    protected BookAdapter mAdapter;
+    protected RecyclerView.LayoutManager mLayoutManager;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -54,18 +83,58 @@ public class BooksFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        books = new ArrayList<Book>();
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                JSONObject jsonObject;
+                HashMap<String,String> book = new HashMap<String, String>();
+                for (int i = 0; i<response.length();i++){
+                    try {
+                        jsonObject = response.getJSONObject(i);
+                        book.put("bookName",jsonObject.getString("Name"));
+                        book.put("url", imgUrl + jsonObject.getString("ImageURL"));
+                        //I receive urls in images/img.jpg format
+                        books.add(new Book(book));
+                        book.clear();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                mAdapter.updateGrid(books);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Error:",error.getMessage());
+            }
+        });
+//        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+//        requestQueue.add(jsonObjectRequest);
+
+        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonObjectRequest);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_books, container, false);
+        //return inflater.inflate(R.layout.fragment_books, container, false);
+
+        View rootView = inflater.inflate(R.layout.fragment_books, container, false);
+        rootView.setTag(TAG);
+        mRecyclerView = (RecyclerView)rootView.findViewById(R.id.rvBooks);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new GridLayoutManager(getActivity(),SPAN_COUNT);
+        mAdapter = new BookAdapter(getActivity(),books);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+//        mAdapter.updateGrid(books);
+        return rootView;
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -83,11 +152,13 @@ public class BooksFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        books.clear();
         mListener = null;
     }
 

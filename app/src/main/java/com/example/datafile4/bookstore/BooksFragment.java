@@ -89,15 +89,22 @@ public class BooksFragment extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
                 JSONObject jsonObject;
-                HashMap<String,String> book = new HashMap<String, String>();
+                int id;
+                String bookName;
+                String imgUrl;
+               // HashMap<String,String> book = new HashMap<String, String>();
                 for (int i = 0; i<response.length();i++){
                     try {
                         jsonObject = response.getJSONObject(i);
-                        book.put("bookName",jsonObject.getString("Name"));
-                        book.put("url", imgUrl + jsonObject.getString("ImageURL"));
-                        //I receive urls in images/img.jpg format
-                        books.add(new Book(book));
-                        book.clear();
+                        id = jsonObject.getInt("ID");
+                        bookName = jsonObject.getString("Name");
+                        imgUrl = jsonObject.getString("ImageURL");
+//                        book.put("bookName",jsonObject.getString("Name"));
+//                        book.put("url", imgUrl + jsonObject.getString("ImageURL"));
+//                        book.put("ID",jsonObject.getInt())
+//                        //I receive urls in images/img.jpg format
+                        books.add(new Book(id,bookName,imgUrl));
+//                        book.clear();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -118,6 +125,7 @@ public class BooksFragment extends Fragment {
             @Override
             public void onItemClick(int position, View v) {
                 Log.d("Click","position" + position);
+                books.get(position);
                 Intent intent = new Intent(getActivity(),BookActivity.class);
                 startActivity(intent);
             }

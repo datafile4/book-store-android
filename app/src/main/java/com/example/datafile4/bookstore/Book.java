@@ -9,6 +9,7 @@ public class Book {
     private String mName;
     private String mAuthor;
     private String mImageUrl;
+    private int mId;
     private String mGenre;
     private String mLanguage;
 //    private Uploader uploader;
@@ -20,10 +21,14 @@ public class Book {
 //        public String mEmail;
 //    }
 
-    public Book(HashMap<String,String> info){
-        mName = info.get("bookName");
-//        mAuthor = info.get("author");
-        mImageUrl = info.get("url");
+    public Book(int Id, String name, String imgUrl){
+//        mName = info.get("bookName");
+////        mAuthor = info.get("author");
+//        mImageUrl = info.get("url");
+//        mId = info.get("ID");
+        mName = name;
+        mId = Id;
+        mImageUrl = imgUrl;
 //        mGenre = info.get("genre");
 //        mLanguage = info.get("language");
 //        Uploader uploader = new Uploader();
@@ -39,5 +44,8 @@ public class Book {
 
     public String getBookImgUrl(){
         return mImageUrl;
+    }
+    public int getBookID(){
+        return mId;
     }
 }

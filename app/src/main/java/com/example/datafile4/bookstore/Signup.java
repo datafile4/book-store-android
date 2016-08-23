@@ -22,6 +22,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.datafile4.bookstore.CommonMethods;
+import com.example.datafile4.bookstore.Config.Constants;
 
 import org.json.JSONObject;
 
@@ -37,11 +38,11 @@ public class Signup extends AppCompatActivity {
     EditText lastNameEdit;
     EditText usernameEdit;
     //keys
-    private String KEY_USERNAME="username";
-    private String KEY_EMAIL="email";
-    private String KEY_PASSWORD="password";
-    private String KEY_LAST_NAME="lastname";
-    private String KEY_FIRST_NAME="firstname";
+//    private String KEY_USERNAME="username";
+//    private String KEY_EMAIL="email";
+//    private String KEY_PASSWORD="password";
+//    private String KEY_LAST_NAME="lastname";
+//    private String KEY_FIRST_NAME="firstname";
 
 
     private String url =  "https://amiraslan.azurewebsites.net/api/BookStore/Register";
@@ -101,11 +102,11 @@ public class Signup extends AppCompatActivity {
                 } else {
                     //registration section
                     HashMap<String, String>params = new HashMap<String, String>();
-                    params.put(KEY_USERNAME,username);
-                    params.put(KEY_EMAIL,email);
-                    params.put(KEY_PASSWORD,password);
-                    params.put(KEY_FIRST_NAME,firstName);
-                    params.put(KEY_LAST_NAME,lastName);
+                    params.put(Constants.KEY_USERNAME,username);
+                    params.put(Constants.KEY_EMAIL,email);
+                    params.put(Constants.KEY_PASSWORD,password);
+                    params.put(Constants.KEY_FIRSTNAME,firstName);
+                    params.put(Constants.KEY_LASTNAME,lastName);
 
                     //request
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params), new Response.Listener<JSONObject>() {

@@ -7,35 +7,13 @@ import java.util.HashMap;
  */
 public class Book {
     private String mName;
-    private String mAuthor;
     private String mImageUrl;
     private int mId;
-    private String mGenre;
-    private String mLanguage;
-//    private Uploader uploader;
-
-//    public class Uploader{
-//        public String mFirstName;
-//        public String mLastName;
-//        public String mUsername;
-//        public String mEmail;
-//    }
 
     public Book(int Id, String name, String imgUrl){
-//        mName = info.get("bookName");
-////        mAuthor = info.get("author");
-//        mImageUrl = info.get("url");
-//        mId = info.get("ID");
         mName = name;
         mId = Id;
         mImageUrl = imgUrl;
-//        mGenre = info.get("genre");
-//        mLanguage = info.get("language");
-//        Uploader uploader = new Uploader();
-//        uploader.mFirstName = info.get("uFirstName");
-//        uploader.mLastName = info.get("uLastName");
-//        uploader.mEmail = info.get("uEmail");
-//        uploader.mUsername = info.get("username");
     }
 
     public String getBookName(){

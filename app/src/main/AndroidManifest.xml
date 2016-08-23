@@ -26,7 +26,8 @@
         <activity
             android:name=".Signup"
             android:theme="@style/AppTheme" />
-        <activity android:name=".BookActivity"></activity>
+        <activity android:name=".BookActivity"
+            android:theme="@style/AppTheme.ActionBar.Transparent"></activity>
     </application>
 
 </manifest>

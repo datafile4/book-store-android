@@ -1,5 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -13,16 +13,12 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
     <style name="AppTheme.ActionBar.Transparent" parent="AppTheme">
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="windowActionBarOverlay">true</item>
         <item name="colorPrimary">@android:color/transparent</item>
     </style>
 
     <style name="AppTheme.ActionBar" parent="AppTheme">
-        <item name="windowActionBarOverlay">false</item>
-        <item name="colorPrimary">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
     </style>
-
 </resources>

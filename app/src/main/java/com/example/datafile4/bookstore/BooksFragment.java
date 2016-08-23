@@ -18,6 +18,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.example.datafile4.bookstore.Config.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,9 +37,10 @@ import java.util.HashMap;
  * create an instance of this fragment.
  */
 public class BooksFragment extends Fragment {
+   // public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     private String url = "https://amiraslan.azurewebsites.net/api/BookStore/GetAllBooks";
-    private String imgUrl = "https://amiraslan.azurewebsites.net/";
-
+    private static String imgUrl = "https://amiraslan.azurewebsites.net/";
+    int bookId;
     private ArrayList<Book> books;
     private static final String TAG = "RecyclerViewFragment";
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
@@ -85,26 +87,25 @@ public class BooksFragment extends Fragment {
         super.onCreate(savedInstanceState);
         books = new ArrayList<Book>();
         mAdapter = new BookAdapter(getActivity(),books);
+        //Volley request
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 JSONObject jsonObject;
                 int id;
                 String bookName;
-                String imgUrl;
+                String Url;
                // HashMap<String,String> book = new HashMap<String, String>();
                 for (int i = 0; i<response.length();i++){
                     try {
                         jsonObject = response.getJSONObject(i);
-                        id = jsonObject.getInt("ID");
-                        bookName = jsonObject.getString("Name");
-                        imgUrl = jsonObject.getString("ImageURL");
-//                        book.put("bookName",jsonObject.getString("Name"));
-//                        book.put("url", imgUrl + jsonObject.getString("ImageURL"));
-//                        book.put("ID",jsonObject.getInt())
+                        id = jsonObject.getInt(Constants.KEY_ID);
+                        bookName = jsonObject.getString(Constants.KEY_BOOKNAME);
+                    //    Url = imgUrl + jsonObject.getString(KEY_IMG_URL);
+                        Url = "https://coubsecure-s.akamaihd.net/get/b54/p/coub/simple/cw_timeline_pic/c00a5a0542b/e241b6de8a916ac8d966b/med_1445063335_image.jpg";//
 //                        //I receive urls in images/img.jpg format
-                        books.add(new Book(id,bookName,imgUrl));
-//                        book.clear();
+                        books.add(new Book(id,bookName,Url));
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -125,8 +126,9 @@ public class BooksFragment extends Fragment {
             @Override
             public void onItemClick(int position, View v) {
                 Log.d("Click","position" + position);
-                books.get(position);
+                bookId = books.get(position).getBookID();
                 Intent intent = new Intent(getActivity(),BookActivity.class);
+                intent.putExtra(Constants.KEY_ID,bookId);
                 startActivity(intent);
             }
         });

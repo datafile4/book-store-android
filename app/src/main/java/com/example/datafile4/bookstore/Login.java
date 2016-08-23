@@ -24,6 +24,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.datafile4.bookstore.Config.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,8 +38,6 @@ import java.util.regex.Pattern;
 public class Login extends AppCompatActivity {
     EditText usernameEdit;
     EditText passwordEdit;
-    String KEY_USERNAME = "username";
-    String KEY_PASSWORD = "password";
     private String PREF = "user_data";
     private String url = "https://amiraslan.azurewebsites.net/api/BookStore/Login";
 
@@ -52,7 +51,7 @@ public class Login extends AppCompatActivity {
 //        actionBar.hide();
         SharedPreferences settings = getSharedPreferences(PREF,Context.MODE_PRIVATE);
         //if setting does not exists, getBoolean will return false
-        if(settings.contains("cookie")){
+        if(settings.contains(Constants.KEY_COOKIE)){
             Intent intent = new Intent(Login.this,MainActivity.class);
             startActivity(intent);
        }
@@ -74,17 +73,13 @@ public class Login extends AppCompatActivity {
                 } else {
                     //login process
                    HashMap<String,String>params = new HashMap<String, String>();
-                    params.put(KEY_USERNAME,username);
-                    params.put(KEY_PASSWORD,pass);
+                    params.put(Constants.KEY_USERNAME,username);
+                    params.put(Constants.KEY_PASSWORD,pass);
 
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params), new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-//                            boolean success = response.optBoolean("success");
-//                            if(success){
-//                                Intent intent = new Intent(Login.this,MainActivity.class);
-//                                startActivity(intent);
-//                            }
+                            //
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -105,9 +100,9 @@ public class Login extends AppCompatActivity {
                                 Pattern p = Pattern.compile("user-g=(.+?);");
                                 Matcher m = p.matcher(cookie);
                                 if(m.find()){
-                                    editor.putString("cookie",m.group(1));
+                                    editor.putString(Constants.KEY_COOKIE,m.group(1));
                                 }
-                                editor.putString("username",username);
+                                editor.putString(Constants.KEY_USERNAME,username);
                                 editor.apply();
                                 Intent intent = new Intent(Login.this,MainActivity.class);
                                 startActivity(intent);
@@ -115,8 +110,9 @@ public class Login extends AppCompatActivity {
                             return super.parseNetworkResponse(response);
                         }
                     };
-                    RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
-                    requestQueue.add(request);
+//                    RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
+//                    requestQueue.add(request);
+                    MySingleton.getInstance(Login.this).addToRequestQueue(request);
                 }
             }
 

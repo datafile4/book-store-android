@@ -8,6 +8,7 @@ public class Constants {
     public static final String KEY_BOOKNAME = "Name";
     public static final String KEY_IMG_URL = "ImageURL";
     public static final String KEY_GENRE = "Genre";
+    public static final String KEY_AUTHOR = "Author";
     public static final String KEY_LANG = "Language";
     public static final String KEY_PRICE = "Pirce";
     public static final String KEY_FIRSTNAME="FirstName";

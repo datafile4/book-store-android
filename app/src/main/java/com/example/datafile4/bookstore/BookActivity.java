@@ -2,10 +2,16 @@ package com.example.datafile4.bookstore;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -18,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import com.example.datafile4.bookstore.Config.Constants;
 
@@ -36,7 +43,7 @@ public class BookActivity extends AppCompatActivity {
         }
         Context context = getBaseContext();
         Intent intent = getIntent();
-        int id = intent.getIntExtra(BooksFragment.EXTRA_MESSAGE,0);
+        int id = intent.getIntExtra(Constants.KEY_ID,0);
         HashMap<String,Integer> params = new HashMap<String, Integer>();
         params.put(Constants.KEY_ID,id);
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.POST, url+String.valueOf(id),null, new Response.Listener<JSONArray>() {
@@ -44,10 +51,11 @@ public class BookActivity extends AppCompatActivity {
             public void onResponse(JSONArray response) {
                 try {
                     JSONObject jsonObject = response.getJSONObject(0);
-                    String name = jsonObject.getString(Constants.KEY_BOOKNAME);
+                    setElements(jsonObject);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                new DownloadImageTask((ImageView)findViewById(R.id.outside_imageview)).execute("http://i.imgur.com/v8hVVdF.jpg");
             }
         }, new Response.ErrorListener() {
             @Override
@@ -68,7 +76,48 @@ public class BookActivity extends AppCompatActivity {
         }
     }
 
-    public void setElements(JSONObject response){
+    public void setElements(JSONObject response) throws JSONException {
+        String nameText = response.getString(Constants.KEY_BOOKNAME);
+        String authorText = response.getString(Constants.KEY_AUTHOR);
+        TextView bookName = (TextView)findViewById(R.id.book_name2);
+        TextView author = (TextView)findViewById(R.id.author_name);
 
+        bookName.setText(nameText);
+        author.setText(author.getText() + authorText);
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+            final RelativeLayout layout = (RelativeLayout)findViewById(R.id.inside_backgdound);
+            Palette.from(result).generate(new Palette.PaletteAsyncListener() {
+                @Override
+                public void onGenerated(Palette palette) {
+                    Palette.Swatch swatch = palette.getVibrantSwatch();
+                    if(swatch != null){
+                        layout.setBackgroundColor(swatch.getRgb());
+                    }
+                }
+            });
+        }
     }
 }

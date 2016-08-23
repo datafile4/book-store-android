@@ -86,8 +86,6 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder>{
         final NetworkImageView image = holder.bookImage;
         ImageLoader mImageLoader = MySingleton.getInstance(mContext).getImageLoader();
         image.setImageUrl(book.getBookImgUrl(),mImageLoader);
-
-
     }
 
     public void updateGrid(List<Book> books){

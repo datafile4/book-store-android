@@ -78,12 +78,15 @@ public class BookActivity extends AppCompatActivity {
 
     public void setElements(JSONObject response) throws JSONException {
         String nameText = response.getString(Constants.KEY_BOOKNAME);
-        String authorText = response.getString(Constants.KEY_AUTHOR);
         TextView bookName = (TextView)findViewById(R.id.book_name2);
         TextView author = (TextView)findViewById(R.id.author_name);
+        TextView genre = (TextView)findViewById(R.id.genre_text);
+        TextView language = (TextView)findViewById(R.id.language_text);
 
+        language.setText(getString(R.string.language,response.getString(Constants.KEY_LANG)));
+        genre.setText(getString(R.string.genre,response.getString(Constants.KEY_GENRE)));
         bookName.setText(nameText);
-        author.setText(author.getText() + authorText);
+        author.setText(getString(R.string.by, response.getString(Constants.KEY_AUTHOR)));
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

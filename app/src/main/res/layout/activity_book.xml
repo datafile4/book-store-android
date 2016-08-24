@@ -18,7 +18,9 @@
            android:layout_height="wrap_content"
            android:orientation="vertical"
            android:layout_gravity="center_horizontal"
-           android:id="@+id/book_linear_layout">
+           android:gravity="center_horizontal"
+           android:id="@+id/book_linear_layout"
+           android:divider="@drawable/divider">
            <RelativeLayout
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
@@ -32,7 +34,7 @@
                    android:scaleType="fitXY"/>
            </RelativeLayout>
            <TextView
-               android:layout_width="wrap_content"
+               android:layout_width="300dp"
                android:layout_height="wrap_content"
                android:textAppearance="?android:attr/textAppearanceLarge"
                android:text="Large Text"
@@ -40,20 +42,49 @@
                android:layout_margin="10dp"
                android:typeface="normal"
                android:fontFamily="cursive"
-               android:layout_gravity="center_horizontal"/>
+               android:gravity="center_horizontal"/>
            <TextView
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:textAppearance="?android:attr/textAppearanceSmall"
                android:id="@+id/author_name"
-               android:text="by"
+               android:text="by "
                android:layout_margin="1dp"
                android:typeface="normal"
                android:fontFamily="casual"
                android:layout_gravity="center_horizontal"/>
-
-
-
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textAppearance="?android:attr/textAppearanceLarge"
+               android:background="@drawable/price_rectangle"
+               android:text="$45"
+               android:layout_gravity="center_horizontal"/>
+           <View
+               android:layout_width="match_parent"
+               android:layout_height="1dp"
+               android:layout_marginTop="8dp"
+               android:background="@color/cardview_dark_background" />
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textAppearance="?android:attr/textAppearanceSmall"
+               android:id="@+id/summary_text"
+               android:text="Summary"
+               android:layout_margin="4dp"
+               android:typeface="normal"
+               android:fontFamily="sans-serif"
+               android:layout_gravity="center_horizontal"/>
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:id="@+id/language_text"
+                />
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:id="@+id/genre_text"
+               />
        </LinearLayout>
    </ScrollView>
         <Button

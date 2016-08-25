@@ -102,7 +102,7 @@ public class BooksFragment extends Fragment {
                         id = jsonObject.getInt(Constants.KEY_ID);
                         bookName = jsonObject.getString(Constants.KEY_BOOKNAME);
                     //    Url = imgUrl + jsonObject.getString(KEY_IMG_URL);
-                        Url = "https://coubsecure-s.akamaihd.net/get/b54/p/coub/simple/cw_timeline_pic/c00a5a0542b/e241b6de8a916ac8d966b/med_1445063335_image.jpg";//
+                        Url = "http://starecat.com/content/wp-content/uploads/copying-and-pasting-from-stack-overflow-essential-book-oreilly.jpg";//
 //                        //I receive urls in images/img.jpg format
                         books.add(new Book(id,bookName,Url));
 

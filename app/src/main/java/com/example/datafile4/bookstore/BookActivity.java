@@ -29,7 +29,7 @@ import java.util.HashMap;
 import com.example.datafile4.bookstore.Config.Constants;
 
 public class BookActivity extends AppCompatActivity {
-    private String url = "http://amiraslan.azurewebsites.net/api/BookStore/GetBookInfo?bookid=";
+    private String url = "http://amiraslan.azurewebsites.net/api/BookStore/GetBookInfo?id=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,7 @@ public class BookActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Volley",error.getMessage());
+//                Log.e("Volley",error.getMessage());
             }
         });
         MySingleton.getInstance(BookActivity.this).addToRequestQueue(jsonObjectRequest);

@@ -7,6 +7,12 @@
     android:paddingRight="5dp"
     tools:context="com.example.datafile4.bookstore.BooksFragment">
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBarBooks"
+        android:layout_gravity="center"
+        />
     <!-- TODO: Update blank fragment layout -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvBooks"
@@ -21,5 +27,7 @@
         android:src="@drawable/ic_filter"
         app:layout_anchor="@id/rvBooks"
         app:layout_anchorGravity="bottom|right|end" />
+
+
 
 </FrameLayout>

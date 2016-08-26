@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -50,6 +51,7 @@ public class BooksFragment extends Fragment {
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
 
+    protected ProgressBar progressBar;
     protected RecyclerView mRecyclerView;
     protected BookAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
@@ -94,6 +96,35 @@ public class BooksFragment extends Fragment {
         books = new ArrayList<Book>();
         mAdapter = new BookAdapter(getActivity(), books);
         //Volley request
+
+        mAdapter.setOnItemClickListener(new BookAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                Log.d("Click", "position" + position);
+                bookId = books.get(position).getBookID();
+                Intent intent = new Intent(getActivity(), BookActivity.class);
+                intent.putExtra(Constants.KEY_ID, bookId);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        //return inflater.inflate(R.layout.fragment_books, container, false);
+
+        View rootView = inflater.inflate(R.layout.fragment_books, container, false);
+        rootView.setTag(TAG);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvBooks);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
+        progressBar = (ProgressBar)rootView.findViewById(R.id.progressBarBooks);
+
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+
         StringRequest jsonObjectRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -124,6 +155,7 @@ public class BooksFragment extends Fragment {
                 }
                 mAdapter.updateGrid(books);
                 Log.v("Response", response);
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -143,31 +175,6 @@ public class BooksFragment extends Fragment {
 //        requestQueue.add(jsonObjectRequest);
 
         MySingleton.getInstance(getActivity()).addToRequestQueue(jsonObjectRequest);
-        mAdapter.setOnItemClickListener(new BookAdapter.ClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-                Log.d("Click", "position" + position);
-                bookId = books.get(position).getBookID();
-                Intent intent = new Intent(getActivity(), BookActivity.class);
-                intent.putExtra(Constants.KEY_ID, bookId);
-                startActivity(intent);
-            }
-        });
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        //return inflater.inflate(R.layout.fragment_books, container, false);
-
-        View rootView = inflater.inflate(R.layout.fragment_books, container, false);
-        rootView.setTag(TAG);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvBooks);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
-
 
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(mLayoutManager);

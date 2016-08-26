@@ -46,12 +46,11 @@ public class BookActivity extends AppCompatActivity {
         int id = intent.getIntExtra(Constants.KEY_ID,0);
         HashMap<String,Integer> params = new HashMap<String, Integer>();
         params.put(Constants.KEY_ID,id);
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.POST, url+String.valueOf(id),null, new Response.Listener<JSONArray>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url+String.valueOf(id),null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response) {
+            public void onResponse(JSONObject response) {
                 try {
-                    JSONObject jsonObject = response.getJSONObject(0);
-                    setElements(jsonObject);
+                    setElements(response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

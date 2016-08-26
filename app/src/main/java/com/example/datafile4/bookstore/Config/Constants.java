@@ -17,4 +17,6 @@ public class Constants {
     public static final String KEY_EMAIL="Email";
     public static final String KEY_COOKIE = "Cookie";
     public static final String KEY_PASSWORD = "Password";
+    public static final String KEY_PAGELENGTH = "pagelength";
+    public static final String KEY_PAGENUMBER = "pagenumber";
 }

@@ -14,10 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.datafile4.bookstore.Config.Constants;
 
 import org.json.JSONArray;
@@ -26,6 +29,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -37,8 +41,8 @@ import java.util.HashMap;
  * create an instance of this fragment.
  */
 public class BooksFragment extends Fragment {
-   // public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-    private String url = "https://amiraslan.azurewebsites.net/api/BookStore/GetAllBooks";
+    // public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+    private String url = "https://amiraslan.azurewebsites.net/api/BookStore/GetBooks";
     private static String imgUrl = "https://amiraslan.azurewebsites.net/";
     int bookId;
     private ArrayList<Book> books;
@@ -49,6 +53,7 @@ public class BooksFragment extends Fragment {
     protected RecyclerView mRecyclerView;
     protected BookAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
+    private JSONArray responseArray;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -60,6 +65,7 @@ public class BooksFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
     public BooksFragment() {
         // Required empty public constructor
     }
@@ -86,38 +92,53 @@ public class BooksFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         books = new ArrayList<Book>();
-        mAdapter = new BookAdapter(getActivity(),books);
+        mAdapter = new BookAdapter(getActivity(), books);
         //Volley request
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+        StringRequest jsonObjectRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONArray response) {
+            public void onResponse(String response) {
                 JSONObject jsonObject;
                 int id;
                 String bookName;
                 String Url;
-               // HashMap<String,String> book = new HashMap<String, String>();
-                for (int i = 0; i<response.length();i++){
+                try {
+                    responseArray = new JSONArray(response);
+                } catch (JSONException e) {
+
+                }
+
+                // HashMap<String,String> book = new HashMap<String, String>();
+                for (int i = 0; i < response.length(); i++) {
                     try {
-                        jsonObject = response.getJSONObject(i);
+                        jsonObject = responseArray.getJSONObject(i);
                         id = jsonObject.getInt(Constants.KEY_ID);
                         bookName = jsonObject.getString(Constants.KEY_BOOKNAME);
-                    //    Url = imgUrl + jsonObject.getString(KEY_IMG_URL);
+                        //    Url = imgUrl + jsonObject.getString(KEY_IMG_URL);
                         Url = "http://starecat.com/content/wp-content/uploads/copying-and-pasting-from-stack-overflow-essential-book-oreilly.jpg";//
 //                        //I receive urls in images/img.jpg format
-                        books.add(new Book(id,bookName,Url));
+                        books.add(new Book(id, bookName, Url));
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
                 mAdapter.updateGrid(books);
+                Log.v("Response", response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Error:",error.getMessage());
+//                Log.e("Error:",error.getMessage());
             }
-        });
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<>();
+                params.put(Constants.KEY_PAGENUMBER, String.valueOf(0));
+                params.put(Constants.KEY_PAGELENGTH, String.valueOf(10));
+                return params;
+            }
+        };
 //        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 //        requestQueue.add(jsonObjectRequest);
 
@@ -125,10 +146,10 @@ public class BooksFragment extends Fragment {
         mAdapter.setOnItemClickListener(new BookAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                Log.d("Click","position" + position);
+                Log.d("Click", "position" + position);
                 bookId = books.get(position).getBookID();
-                Intent intent = new Intent(getActivity(),BookActivity.class);
-                intent.putExtra(Constants.KEY_ID,bookId);
+                Intent intent = new Intent(getActivity(), BookActivity.class);
+                intent.putExtra(Constants.KEY_ID, bookId);
                 startActivity(intent);
             }
         });
@@ -143,9 +164,9 @@ public class BooksFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_books, container, false);
         rootView.setTag(TAG);
-        mRecyclerView = (RecyclerView)rootView.findViewById(R.id.rvBooks);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvBooks);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new GridLayoutManager(getActivity(),SPAN_COUNT);
+        mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
 
 
         mRecyclerView.setAdapter(mAdapter);
@@ -187,7 +208,7 @@ public class BooksFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

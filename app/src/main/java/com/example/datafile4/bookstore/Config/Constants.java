@@ -19,4 +19,5 @@ public class Constants {
     public static final String KEY_PASSWORD = "Password";
     public static final String KEY_PAGELENGTH = "pagelength";
     public static final String KEY_PAGENUMBER = "pagenumber";
+    public static final String HOST = "https://amiraslan.azurewebsites.net";
 }

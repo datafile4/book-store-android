@@ -29,7 +29,10 @@
         <activity
             android:name=".BookActivity"
             android:theme="@style/AppTheme.ActionBar.Transparent" />
-        <activity android:name=".FilterActivity"></activity>
+        <activity android:name=".FilterActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
 
 </manifest>

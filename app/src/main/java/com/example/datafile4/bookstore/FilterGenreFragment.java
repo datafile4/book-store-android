@@ -3,10 +3,28 @@ package com.example.datafile4.bookstore;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.example.datafile4.bookstore.Config.Constants;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -18,10 +36,16 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class FilterGenreFragment extends Fragment {
+    private String urlGenres = Constants.HOST + "/api/BookStore/GetGenres";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    protected RecyclerView mRecyclerView;
+    protected GenreListAdapter mAdapter;
+    protected RecyclerView.LayoutManager mLayoutManager;
+    private List<Genre> mGenres;
+    private static final String TAG = "FilterGenreRecyclerViewFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -51,6 +75,7 @@ public class FilterGenreFragment extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,13 +83,49 @@ public class FilterGenreFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mGenres = new ArrayList<>();
+        mAdapter = new GenreListAdapter(getActivity(), mGenres);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlGenres, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                //HashMap<Integer,String> genres = new HashMap<>();
+                for(int i = 0 ;i<response.length();i++){
+                    try {
+                        JSONObject object = response.getJSONObject(i);
+                        mGenres.add(new Genre(object.getInt(Constants.KEY_ID), object.getString("Name")));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                mAdapter.updateList(mGenres);
+            }
+        }, new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley error",error.getMessage());
+            }
+        });
+        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_filter_genre, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_filter_genre, container, false);
+        rootView.setTag(TAG);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.filter_checklist_genres);
+        //mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -88,6 +89,8 @@ public class BooksFragment extends Fragment {
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+
+
     }
 
     @Override
@@ -118,6 +121,16 @@ public class BooksFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_books, container, false);
         rootView.setTag(TAG);
+
+        com.github.clans.fab.FloatingActionButton floatingActionButton = ( com.github.clans.fab.FloatingActionButton) rootView.findViewById(R.id.books_floatingbutton);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),FilterActivity.class);
+                startActivity(intent);
+            }
+        });
+
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvBooks);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);

@@ -13,7 +13,7 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Login"
             android:theme="@style/AppTheme.NoActionBar">
@@ -26,8 +26,10 @@
         <activity
             android:name=".Signup"
             android:theme="@style/AppTheme" />
-        <activity android:name=".BookActivity"
-            android:theme="@style/AppTheme.ActionBar.Transparent"></activity>
+        <activity
+            android:name=".BookActivity"
+            android:theme="@style/AppTheme.ActionBar.Transparent" />
+        <activity android:name=".FilterActivity"></activity>
     </application>
 
 </manifest>

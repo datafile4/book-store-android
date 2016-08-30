@@ -80,11 +80,18 @@ public class LanguageListAdapter extends RecyclerView.Adapter<LanguageListAdapte
             public void onClick(View v) {
                 if(checkBox.isChecked()){
                     onItemCheckListener.onItemCheck(language);
+                    language.setSelected(true);
                 } else {
                     onItemCheckListener.onItemUncheck(language);
+                    language.setSelected(false);
                 }
             }
         });
+        if(language.isSelected()){
+            checkBox.setChecked(true);
+        } else {
+            checkBox.setChecked(false);
+        }
     }
     @Override
     public int getItemCount() {

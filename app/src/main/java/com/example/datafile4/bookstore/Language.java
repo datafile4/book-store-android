@@ -6,6 +6,7 @@ package com.example.datafile4.bookstore;
 public class Language {
     private int mID;
     private String mLanguage;
+    private boolean selected;
 
     public Language(int ID, String language){
         mID = ID;
@@ -18,5 +19,12 @@ public class Language {
 
     public int getId(){
         return mID;
+    }
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

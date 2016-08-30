@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_centerInParent="true">
     <CheckBox
         android:id="@+id/filter_row_checkbox"
         android:layout_width="wrap_content"
@@ -11,5 +14,7 @@
         android:id="@+id/filter_row_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceListItem"/>
+
 </LinearLayout>

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context="com.example.datafile4.bookstore.FilterGenreFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/filter_checklist_genres"

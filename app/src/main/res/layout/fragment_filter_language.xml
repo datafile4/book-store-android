@@ -4,10 +4,11 @@
     android:layout_height="match_parent"
     tools:context="com.example.datafile4.bookstore.FilterLanguageFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/filter_checklist_languages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_gravity="center_horizontal"/>
 
 </FrameLayout>

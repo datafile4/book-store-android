@@ -6,4 +6,5 @@
     <color name="colorLoginAndRegister">#424034</color>
     <color name="colorButtonBackground">#dee3e5</color>
     <color name="colorButtonText">#ffffff</color>
+    <color name="colorGreen">#009688</color>
 </resources>

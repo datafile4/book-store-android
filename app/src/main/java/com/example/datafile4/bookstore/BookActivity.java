@@ -31,6 +31,7 @@ import com.example.datafile4.bookstore.Config.Constants;
 public class BookActivity extends AppCompatActivity {
     private String url = "http://amiraslan.azurewebsites.net/api/BookStore/GetBookInfo?id=";
 
+    public static ImageView bmImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,10 +90,10 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
+       // ImageView bmImage;
 
         public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
+            BookActivity.bmImage = bmImage;
         }
 
         protected Bitmap doInBackground(String... urls) {
@@ -122,4 +123,6 @@ public class BookActivity extends AppCompatActivity {
             });
         }
     }
+
+
 }

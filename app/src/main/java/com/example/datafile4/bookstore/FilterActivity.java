@@ -38,7 +38,7 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter);
         //we must create toolbar instead ActionBar
-        toolbar = (Toolbar) findViewById(R.id.filter_toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);

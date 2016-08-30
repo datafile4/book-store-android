@@ -45,13 +45,14 @@ public class FilterGenreFragment extends Fragment {
     protected GenreListAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
     private List<Genre> mGenres;
-    private static final String TAG = "FilterGenreRecyclerViewFragment";
+    private final String TAG = "FilterGenreRecyclerViewFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private static List<Genre> currentSelectedItems = new ArrayList<>();
 
     public FilterGenreFragment() {
         // Required empty public constructor
@@ -84,7 +85,17 @@ public class FilterGenreFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         mGenres = new ArrayList<>();
-        mAdapter = new GenreListAdapter(getActivity(), mGenres);
+        mAdapter = new GenreListAdapter(getActivity(), mGenres, new GenreListAdapter.OnItemCheckListener() {
+            @Override
+            public void onItemCheck(Genre genre) {
+                currentSelectedItems.add(genre);
+            }
+
+            @Override
+            public void onItemUncheck(Genre genre) {
+                currentSelectedItems.remove(genre);
+            }
+        });
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlGenres, null, new Response.Listener<JSONArray>() {
             @Override
@@ -165,5 +176,8 @@ public class FilterGenreFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    public List<Genre> getSelectedItems(){
+        return currentSelectedItems;
     }
 }

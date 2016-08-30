@@ -11,12 +11,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.datafile4.bookstore.Config.Constants;
+import com.github.clans.fab.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +32,9 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private FilterGenreFragment genreFragment;
+    private FilterPriceRangeFragment priceRangeFragment;
+    private FilterLanguageFragment languageFragment;
 
     private String urlLanguages = Constants.HOST + "/api/BookStore/GetLanguages";
 
@@ -50,6 +55,15 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
 
         tabLayout = (TabLayout) findViewById(R.id.filter_tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        //Confirm floating button onclick
+        FloatingActionButton confirmButton = (FloatingActionButton)findViewById(R.id.filter_confirm_floatingbutton);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -64,10 +78,13 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
     private void setupViewPager(ViewPager viewPager) {
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        languageFragment = new FilterLanguageFragment();
+        genreFragment = new FilterGenreFragment();
+        priceRangeFragment = new FilterPriceRangeFragment();
 
-        adapter.addFragment(new FilterGenreFragment(), "Genre");
-        adapter.addFragment(new FilterLanguageFragment(), "Language");
-        adapter.addFragment(new FilterPriceRangeFragment(), "Price");
+        adapter.addFragment(genreFragment, getString(R.string.genre2));
+        adapter.addFragment(languageFragment, getString(R.string.language2));
+        adapter.addFragment(priceRangeFragment, getString(R.string.price));
         viewPager.setAdapter(adapter);
     }
 

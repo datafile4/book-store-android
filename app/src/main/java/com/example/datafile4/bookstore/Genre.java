@@ -6,6 +6,7 @@ package com.example.datafile4.bookstore;
 public class Genre {
     private int mID;
     private String mGenreName;
+    private boolean selected;
 
     public Genre(int ID, String genreName){
         mID = ID;
@@ -18,5 +19,13 @@ public class Genre {
 
     public int getGenreID() {
         return mID;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

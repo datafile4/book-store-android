@@ -1,6 +1,7 @@
 package com.example.datafile4.bookstore;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,11 @@ import java.util.List;
  * Created by datafile4 on 8/29/16.
  */
 public class LanguageListAdapter extends RecyclerView.Adapter<LanguageListAdapter.ViewHolder> {
+    interface OnItemCheckListener{
+        void onItemCheck(Language language);
+        void onItemUncheck(Language language);
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nameTextView;
         public CheckBox checkBox;
@@ -33,10 +39,14 @@ public class LanguageListAdapter extends RecyclerView.Adapter<LanguageListAdapte
     //Store context. It will be needed below
     private Context mContext;
 
+    @NonNull
+    private OnItemCheckListener onItemCheckListener;
+
     //Constructor
-    public LanguageListAdapter(Context context, List<Language> langs){
+    public LanguageListAdapter(Context context, List<Language> langs,@NonNull OnItemCheckListener onItemCheckListener){
         mLangs = langs;
         mContext = context;
+        this.onItemCheckListener = onItemCheckListener;
     }
     public Context getContext(){
         return mContext;
@@ -56,14 +66,25 @@ public class LanguageListAdapter extends RecyclerView.Adapter<LanguageListAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         //Get the data model based on position
-        Language language = mLangs.get(position);
+        final Language language = mLangs.get(position);
 
         // Setting item views based on my views and data model
         TextView textView = holder.nameTextView;
         textView.setText(language.getLanguage());
 
-        CheckBox checkBox = holder.checkBox;
+        final CheckBox checkBox = holder.checkBox;
         checkBox.setChecked(false);
+
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(checkBox.isChecked()){
+                    onItemCheckListener.onItemCheck(language);
+                } else {
+                    onItemCheckListener.onItemUncheck(language);
+                }
+            }
+        });
     }
     @Override
     public int getItemCount() {

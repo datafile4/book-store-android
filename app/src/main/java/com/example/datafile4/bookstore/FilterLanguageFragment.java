@@ -49,7 +49,7 @@ public class FilterLanguageFragment extends Fragment {
     protected RecyclerView.LayoutManager mLayoutManager;
     private List<Language> mLanguages;
     private static final String TAG = "FilterLanguageRecyclerViewFragment";
-
+    private static List<Language> currentSelectedItems = new ArrayList<>();
     private OnFragmentInteractionListener mListener;
 
     public FilterLanguageFragment() {
@@ -82,7 +82,17 @@ public class FilterLanguageFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         mLanguages = new ArrayList<>();
-        mAdapter = new LanguageListAdapter(getActivity(), mLanguages);
+        mAdapter = new LanguageListAdapter(getActivity(), mLanguages, new LanguageListAdapter.OnItemCheckListener() {
+            @Override
+            public void onItemCheck(Language language) {
+                currentSelectedItems.add(language);
+            }
+
+            @Override
+            public void onItemUncheck(Language language) {
+                currentSelectedItems.remove(language);
+            }
+        });
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlLangs, null, new Response.Listener<JSONArray>() {
             @Override
@@ -159,4 +169,8 @@ public class FilterLanguageFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+    public List<Language> getSelectedItems(){
+        return currentSelectedItems;
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.example.datafile4.bookstore;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,12 @@ import java.util.List;
  * Created by datafile4 on 8/29/16.
  */
 public class GenreListAdapter extends RecyclerView.Adapter<GenreListAdapter.ViewHolder> {
+
+    interface OnItemCheckListener{
+        void onItemCheck(Genre genre);
+        void onItemUncheck(Genre genre);
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nameTextView;
         public CheckBox checkBox;
@@ -29,16 +36,23 @@ public class GenreListAdapter extends RecyclerView.Adapter<GenreListAdapter.View
             checkBox = (CheckBox) itemView.findViewById(R.id.filter_row_checkbox);
 
         }
+
     }
     private List<Genre> mGenres;
     //Store context. It will be needed below
     private Context mContext;
 
+    @NonNull
+    private OnItemCheckListener onItemCheckListener;
+
     //Constructor
-    public GenreListAdapter(Context context, List<Genre> genres){
+    public GenreListAdapter(Context context, List<Genre> genres, @NonNull OnItemCheckListener onItemCheckListener){
         mGenres = genres;
         mContext = context;
+        this.onItemCheckListener = onItemCheckListener;
     }
+
+
 
     public Context getContext(){
         return mContext;
@@ -61,14 +75,34 @@ public class GenreListAdapter extends RecyclerView.Adapter<GenreListAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         //Get the data model based on position
-        Genre genre = mGenres.get(position);
+        final Genre genre = mGenres.get(position);
 
         // Setting item views based on my views and data model
         TextView textView = holder.nameTextView;
         textView.setText(genre.getGenreName());
 
-        CheckBox checkBox = holder.checkBox;
-        checkBox.setChecked(false);
+        final CheckBox checkBox = holder.checkBox;
+       // checkBox.setId(genre.getGenreID());
+
+
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(checkBox.isChecked()){
+                    onItemCheckListener.onItemCheck(genre);
+                    genre.setSelected(true);
+                } else {
+                    onItemCheckListener.onItemUncheck(genre);
+                    genre.setSelected(false);
+                }
+            }
+        });
+        if(genre.isSelected()){
+            checkBox.setChecked(true);
+        } else {
+            checkBox.setChecked(false);
+        }
+        //checkBox.setChecked(false);
     }
     @Override
     public int getItemCount() {

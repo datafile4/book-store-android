@@ -20,4 +20,12 @@ public class Constants {
     public static final String KEY_PAGELENGTH = "pagelength";
     public static final String KEY_PAGENUMBER = "pagenumber";
     public static final String HOST = "https://amiraslan.azurewebsites.net";
+
+    public static final String KEY_FILTER_LANGIDS="LangIDs";
+    public static final String KEY_FILTER_GENREIDS="GenreIDs";
+    public static final String KEY_FILTER_LOWPRICE="LowPrice";
+    public static final String KEY_FILTER_HIGHPRICE="HighPrice";
+    public static final String KEY_FILTER_SEARCHTERMS="SearchTerms";
+    public static final String KEY_FILTER_PAGINATION="SearchTerms";
+    public static final String KEY_FULTER_PAGENUMBER="PageLength";
 }

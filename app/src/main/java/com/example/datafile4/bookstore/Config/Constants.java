@@ -30,4 +30,6 @@ public class Constants {
     public static final String KEY_FILTER_PAGENUMBER="PageNumber";
     public static final String KEY_FILTER_PAGELENGTH="PageLength";
     public static final String KEY_FILTER_VALUES = "filtervalues";
+    public static final String filterRequestValues = "{'LangIDs':[], 'GenreIDs':[],  'LowPrice':0,  'HighPrice':999,  'SearchTerms':[],  'Pagination':{ 'PageNumber':0,    'PageLength':10  }}";
+    public static final String PREF = "user_data";
 }

@@ -26,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.datafile4.bookstore.Config.Constants;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,8 +39,9 @@ import java.util.regex.Pattern;
 public class Login extends AppCompatActivity {
     EditText usernameEdit;
     EditText passwordEdit;
-    private String PREF = "user_data";
+//    private String PREF = "user_data";
     private String url = "https://amiraslan.azurewebsites.net/api/BookStore/Login";
+    //private String filterRequestValues = "{'LangIDs':[], 'GenreIDs':[],  'LowPrice':0,  'HighPrice':999,  'SearchTerms':[],  'Pagination':{ 'PageNumber':0,    'PageLength':10  }}";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +51,7 @@ public class Login extends AppCompatActivity {
         //hiding action bar in login
 //        ActionBar actionBar = getSupportActionBar();
 //        actionBar.hide();
-        SharedPreferences settings = getSharedPreferences(PREF,Context.MODE_PRIVATE);
-        //if setting does not exists, getBoolean will return false
-        if(settings.contains(Constants.KEY_COOKIE)){
-            Intent intent = new Intent(Login.this,MainActivity.class);
-            startActivity(intent);
-       }
+
 
          /*login*/
         Button loginButton = (Button) findViewById(R.id.loginButton);
@@ -93,7 +90,7 @@ public class Login extends AppCompatActivity {
                             /*we must save user-g token in SharedPreferences*/
                             String cookie = response.headers.get("Set-Cookie");
                             if(!cookie.isEmpty()){
-                                SharedPreferences sharedPrefs = getSharedPreferences(PREF,Context.MODE_PRIVATE);
+                                SharedPreferences sharedPrefs = getSharedPreferences(Constants.PREF,Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPrefs.edit();
 
                             /*extact user-g with regex*/
@@ -103,6 +100,8 @@ public class Login extends AppCompatActivity {
                                     editor.putString(Constants.KEY_COOKIE,m.group(1));
                                 }
                                 editor.putString(Constants.KEY_USERNAME,username);
+                                editor.putString(Constants.KEY_FILTER_VALUES,CommonMethods.createFilterJSONString(new JSONArray(),
+                                        new JSONArray(),0,9999,new JSONArray(),0,30));
                                 editor.apply();
                                 Intent intent = new Intent(Login.this,MainActivity.class);
                                 startActivity(intent);

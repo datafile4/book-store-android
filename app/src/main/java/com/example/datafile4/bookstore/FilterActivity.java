@@ -1,7 +1,10 @@
 package com.example.datafile4.bookstore;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,7 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class FilterActivity extends AppCompatActivity implements FilterGenreFragment.OnFragmentInteractionListener,FilterPriceRangeFragment.OnFragmentInteractionListener,FilterLanguageFragment.OnFragmentInteractionListener {
+public class FilterActivity extends AppCompatActivity implements FilterGenreFragment.OnFragmentInteractionListener, FilterPriceRangeFragment.OnFragmentInteractionListener, FilterLanguageFragment.OnFragmentInteractionListener {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -49,7 +52,7 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
         getSupportActionBar().setTitle("Filter by");
-
+        final Context context = getApplicationContext();
         //view pager for swipe
         viewPager = (ViewPager) findViewById(R.id.filter_viewpager);
         setupViewPager(viewPager);
@@ -58,40 +61,48 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
         tabLayout.setupWithViewPager(viewPager);
 
         //Confirm floating button onclick
-        FloatingActionButton confirmButton = (FloatingActionButton)findViewById(R.id.filter_confirm_floatingbutton);
+        FloatingActionButton confirmButton = (FloatingActionButton) findViewById(R.id.filter_confirm_floatingbutton);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    JSONObject toSend = new JSONObject();
-                    toSend.put(Constants.KEY_FILTER_LANGIDS,languageFragment.getSelectedItems());
-                    toSend.put(Constants.KEY_FILTER_GENREIDS,genreFragment.getSelectedItems());
-                    toSend.put(Constants.KEY_FILTER_LOWPRICE,priceRangeFragment.getLowPrice());
-                    toSend.put(Constants.KEY_FILTER_HIGHPRICE,priceRangeFragment.getHighPrice());
-                    //Search currently doesn't work. Sorry :(
-                    toSend.put(Constants.KEY_FILTER_SEARCHTERMS,"");
-                    JSONObject pagination = new JSONObject();
-                    pagination.put(Constants.KEY_FILTER_PAGENUMBER,0);
-                    pagination.put(Constants.KEY_FILTER_PAGELENGTH,10);
-                    toSend.put("Pagination",pagination);
-                    String parsedJson = toSend.toString();
-                    //Sending to MainActivity
-                    Intent intent = new Intent(FilterActivity.this, MainActivity.class);
-                    intent.putExtra(Constants.KEY_FILTER_VALUES, parsedJson);
-                    startActivity(intent);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
+//                    JSONObject toSend = new JSONObject();
+//                    toSend.put(Constants.KEY_FILTER_LANGIDS,languageFragment.getSelectedItems());
+//                    toSend.put(Constants.KEY_FILTER_GENREIDS,genreFragment.getSelectedItems());
+//                    toSend.put(Constants.KEY_FILTER_LOWPRICE,priceRangeFragment.getLowPrice());
+//                    toSend.put(Constants.KEY_FILTER_HIGHPRICE,priceRangeFragment.getHighPrice());
+//                    //Search currently doesn't work. Sorry :(
+//                    toSend.put(Constants.KEY_FILTER_SEARCHTERMS,new JSONArray());
+//                    JSONObject pagination = new JSONObject();
+//                    pagination.put(Constants.KEY_FILTER_PAGENUMBER,0);
+//                    pagination.put(Constants.KEY_FILTER_PAGELENGTH,30);
+//                    toSend.put("Pagination",pagination);
+//                    String parsedJson = toSend.toString();
+//                    //Store filter string in SharedPreferences
+
+                String parsedJson = CommonMethods.createFilterJSONString(languageFragment.getSelectedItems(),
+                        genreFragment.getSelectedItems(), priceRangeFragment.getLowPrice(), priceRangeFragment.getHighPrice(),
+                        new JSONArray(), 0, 30);
+                SharedPreferences sharedPrefs = getSharedPreferences(Constants.PREF, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putString(Constants.KEY_FILTER_VALUES, parsedJson);
+                editor.commit();
+                Intent intent = new Intent(FilterActivity.this, MainActivity.class);
+                //intent.putExtra(Constants.KEY_FILTER_VALUES, parsedJson);
+                startActivity(intent);
             }
+
         });
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
                 return true;
-            default:return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

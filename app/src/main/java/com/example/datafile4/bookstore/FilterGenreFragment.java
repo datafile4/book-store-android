@@ -184,11 +184,12 @@ public class FilterGenreFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-    public List<Integer> getSelectedItems()  {
-        List <Integer> Ids = new ArrayList<>();
+    public JSONArray getSelectedItems()  {
+        //List <Integer> Ids = new ArrayList<>();
+        JSONArray Ids = new JSONArray();
         for(int i = 0;i<currentSelectedItems.size();i++){
             Genre genre = currentSelectedItems.get(i);
-            Ids.add(genre.getGenreID());
+            Ids.put(genre.getGenreID());
         }
         return Ids;
     }

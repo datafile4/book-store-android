@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.example.datafile4.bookstore.Config.Constants;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +42,12 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences settings = getSharedPreferences(Constants.PREF,Context.MODE_PRIVATE);
+        //if setting does not exists, getBoolean will return false
+        if(!settings.contains(Constants.KEY_COOKIE)){
+            Intent intent = new Intent(MainActivity.this,Login.class);
+            startActivity(intent);
+        }
         //Set a Toolbar to replace the ActionBar
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -53,35 +60,14 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
         // Tie DrawerLayout events to the ActionBarToggle
         mDrawer.addDrawerListener(drawerToggle);
 
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(Constants.KEY_FILTER_VALUES);
-        if(message == null){
-            JSONObject defaultParameter = new JSONObject();
-            try {
-                defaultParameter.put(Constants.KEY_FILTER_LANGIDS,"");
-                defaultParameter.put(Constants.KEY_FILTER_GENREIDS,"");
-                defaultParameter.put(Constants.KEY_FILTER_LOWPRICE,0);
-                defaultParameter.put(Constants.KEY_FILTER_HIGHPRICE,9999);
-                defaultParameter.put(Constants.KEY_FILTER_SEARCHTERMS,"");
-                JSONObject pagination = new JSONObject();
-                pagination.put(Constants.KEY_FILTER_PAGENUMBER,0);
-                pagination.put(Constants.KEY_FILTER_PAGELENGTH,10);
-                defaultParameter.put("Pagination",pagination);
-                message = defaultParameter.toString();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-       // Log.v("FilterValues:",message+" ");
+        ///Log.v("FilterValuesActivity:",message+" ");
         //start the default fragment
         Class defaultFragmentClass = BooksFragment.class;
         try {
             Fragment defaultFragment = (Fragment)defaultFragmentClass.newInstance();
-            Bundle bundle = new Bundle();
-            bundle.putString(Constants.KEY_FILTER_VALUES, message);
-            defaultFragment.setArguments(bundle);
+//            Bundle bundle = new Bundle();
+//            bundle.putString(Constants.KEY_FILTER_VALUES, message);
+//            defaultFragment.setArguments(bundle);
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().add(R.id.flContent, defaultFragment).commit();
         } catch (InstantiationException e) {
@@ -186,4 +172,13 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
         startActivity(intent);
     }
 
+    @Override
+    protected void onDestroy() {
+        SharedPreferences sharedPrefs = getSharedPreferences(Constants.PREF,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putString(Constants.KEY_FILTER_VALUES,CommonMethods.createFilterJSONString(new JSONArray(),
+                new JSONArray(),0,9999,new JSONArray(),0,30));
+        editor.commit();
+        super.onDestroy();
+    }
 }

@@ -2,12 +2,15 @@ package com.example.datafile4.bookstore;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -88,8 +91,14 @@ public class BooksFragment extends Fragment {
         books = new ArrayList<Book>();
         mAdapter = new BookAdapter(getActivity(), books);
         //Message from MainActivity
-        String message = getArguments().getString(Constants.KEY_FILTER_VALUES);
-        Log.v("FilterMessage",message);
+       // String message = getArguments().getString(Constants.KEY_FILTER_VALUES);
+
+        //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences sharedPrefs = this.getActivity().getSharedPreferences(Constants.PREF,Context.MODE_PRIVATE);
+        String message = sharedPrefs.getString(Constants.KEY_FILTER_VALUES,"");
+       // String message = "{'LangIDs':[], 'GenreIDs':[],  'LowPrice':0,  'HighPrice':999,  'SearchTerms':[],  'Pagination':{ 'PageNumber':0,    'PageLength':10  }}";
+
+        Log.v("FilterValuesFragment",message);
         JSONObject queryParameter = null;
         try {
             queryParameter = new JSONObject(message);
@@ -124,7 +133,7 @@ public class BooksFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-//                Log.e("Error:",error.getMessage());
+                Log.e("ErrorVolley:","Something is bad");
             }
         });
 // {

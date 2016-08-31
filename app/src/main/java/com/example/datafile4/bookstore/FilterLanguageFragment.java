@@ -16,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.datafile4.bookstore.Config.Constants;
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -177,11 +178,11 @@ public class FilterLanguageFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public List<Integer> getSelectedItems() {
-        List<Integer> Ids = new ArrayList<>();
+    public JSONArray getSelectedItems() {
+        JSONArray Ids = new JSONArray();
         for(int i = 0;i<currentSelectedItems.size();i++){
             Language lang = currentSelectedItems.get(i);
-            Ids.add(lang.getId());
+            Ids.put(lang.getId());
         }
         return Ids;
     }

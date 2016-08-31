@@ -122,26 +122,22 @@ public class FilterPriceRangeFragment extends Fragment {
     }
 
     public int getHighPrice(){
-        int value;
-        if(highPriceText == null){
-            value = 9999;
-        } else {
-            String highText = highPriceText.getText().toString();
-            value = Integer.valueOf(highText);
+        int value = 9999;
+        if(highPriceText != null){
+            String price = highPriceText.getText().toString();
+            if(!price.isEmpty()){
+                value = Integer.valueOf(price);
+            }
         }
         return value;
     }
     public int getLowPrice(){
         int value = 0;
-        try {
-            if(lowPriceText == null){
-                value = 0;
-            } else {
-                String lowText = lowPriceText.getText().toString();
-                value = Integer.valueOf(lowText);
+        if(lowPriceText !=null){
+            String price = lowPriceText.getText().toString();
+            if(!price.isEmpty()){
+                value = Integer.valueOf(price);
             }
-        } catch (NullPointerException e){
-            Log.e("Price error",e.getMessage());
         }
         return value;
     }

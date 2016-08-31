@@ -44,7 +44,7 @@ import java.util.Map;
  */
 public class BooksFragment extends Fragment {
     // public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-    private String url = "https://amiraslan.azurewebsites.net/api/BookStore/GetBooks";
+    private String url = "https://amiraslan.azurewebsites.net/api/BookStore/GetFilteredBooks";
     private static String imgUrl = "https://amiraslan.azurewebsites.net/";
     int bookId;
     private ArrayList<Book> books;
@@ -58,12 +58,11 @@ public class BooksFragment extends Fragment {
     protected RecyclerView.LayoutManager mLayoutManager;
     private JSONArray responseArray;
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "filtervalues";
+    //private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+
     private String mParam1;
     private String mParam2;
 
@@ -73,24 +72,14 @@ public class BooksFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BooksFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static BooksFragment newInstance(String param1, String param2) {
+
+    public static BooksFragment newInstance(String message) {
         BooksFragment fragment = new BooksFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, message);
+      //  args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-
-
     }
 
     @Override
@@ -98,7 +87,57 @@ public class BooksFragment extends Fragment {
         super.onCreate(savedInstanceState);
         books = new ArrayList<Book>();
         mAdapter = new BookAdapter(getActivity(), books);
+        //Message from MainActivity
+        String message = getArguments().getString(Constants.KEY_FILTER_VALUES);
+        Log.v("FilterMessage",message);
+        JSONObject queryParameter = null;
+        try {
+            queryParameter = new JSONObject(message);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         //Volley request
+        CustomJsonArrayRequest jsonObjectRequest = new CustomJsonArrayRequest(Request.Method.POST, url,queryParameter, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                JSONObject jsonObject;
+                int id;
+                String bookName;
+                String Url;
+
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        jsonObject = response.getJSONObject(i);
+                        id = jsonObject.getInt(Constants.KEY_ID);
+                        bookName = jsonObject.getString(Constants.KEY_BOOKNAME);
+                        //Url = imgUrl + jsonObject.getString(Constants.KEY_IMG_URL);
+                        Url = "http://starecat.com/content/wp-content/uploads/copying-and-pasting-from-stack-overflow-essential-book-oreilly.jpg";//
+                        //I receive urls in images/img.jpg format
+                        books.add(new Book(id, bookName, Url));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                mAdapter.updateGrid(books);
+               // progressBar.setVisibility(ProgressBar.INVISIBLE);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                Log.e("Error:",error.getMessage());
+            }
+        });
+// {
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                HashMap<String, String> params = new HashMap<>();
+//
+//                params.put(Constants.KEY_PAGENUMBER, String.valueOf(0));
+//                params.put(Constants.KEY_PAGELENGTH, String.valueOf(10));
+//                return params;
+//            }
+//        };
+        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonObjectRequest);
 
         mAdapter.setOnItemClickListener(new BookAdapter.ClickListener() {
             @Override
@@ -110,6 +149,11 @@ public class BooksFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+
+//        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+//        requestQueue.add(jsonObjectRequest);
+
 
     }
 
@@ -134,61 +178,9 @@ public class BooksFragment extends Fragment {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvBooks);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
-        progressBar = (ProgressBar)rootView.findViewById(R.id.progressBarBooks);
-
-        progressBar.setVisibility(ProgressBar.VISIBLE);
-
-        StringRequest jsonObjectRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                JSONObject jsonObject;
-                int id;
-                String bookName;
-                String Url;
-                try {
-                    responseArray = new JSONArray(response);
-                } catch (JSONException e) {
-
-                }
-
-                // HashMap<String,String> book = new HashMap<String, String>();
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        jsonObject = responseArray.getJSONObject(i);
-                        id = jsonObject.getInt(Constants.KEY_ID);
-                        bookName = jsonObject.getString(Constants.KEY_BOOKNAME);
-                        //    Url = imgUrl + jsonObject.getString(KEY_IMG_URL);
-                        Url = "http://starecat.com/content/wp-content/uploads/copying-and-pasting-from-stack-overflow-essential-book-oreilly.jpg";//
-//                        //I receive urls in images/img.jpg format
-                        books.add(new Book(id, bookName, Url));
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                mAdapter.updateGrid(books);
-                Log.v("Response", response);
-                progressBar.setVisibility(ProgressBar.INVISIBLE);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-//                Log.e("Error:",error.getMessage());
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String, String> params = new HashMap<>();
-                params.put(Constants.KEY_PAGENUMBER, String.valueOf(0));
-                params.put(Constants.KEY_PAGELENGTH, String.valueOf(10));
-                return params;
-            }
-        };
-//        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-//        requestQueue.add(jsonObjectRequest);
-
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonObjectRequest);
-
+//        progressBar = (ProgressBar)rootView.findViewById(R.id.progressBarBooks);
+//        progressBar.setVisibility(ProgressBar.INVISIBLE);
+        //progressBar.setVisibility(ProgressBar.VISIBLE);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(mLayoutManager);
 //        mAdapter.updateGrid(books);

@@ -27,5 +27,7 @@ public class Constants {
     public static final String KEY_FILTER_HIGHPRICE="HighPrice";
     public static final String KEY_FILTER_SEARCHTERMS="SearchTerms";
     public static final String KEY_FILTER_PAGINATION="SearchTerms";
-    public static final String KEY_FULTER_PAGENUMBER="PageLength";
+    public static final String KEY_FILTER_PAGENUMBER="PageNumber";
+    public static final String KEY_FILTER_PAGELENGTH="PageLength";
+    public static final String KEY_FILTER_VALUES = "filtervalues";
 }

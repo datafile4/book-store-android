@@ -11,6 +11,7 @@
         android:orientation="vertical"
         android:gravity="center"
         android:layout_gravity="center">
+
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -19,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
-                android:id="@+id/highprice_picker"
+                android:id="@+id/filter_highprice_picker"
                 android:layout_gravity="center"
                 android:hint="@string/high_price"/>
         </android.support.design.widget.TextInputLayout>
@@ -32,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
-                android:id="@+id/lowprice_picker"
+                android:id="@+id/filter_lowprice_picker"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:hint="@string/low_price"/>

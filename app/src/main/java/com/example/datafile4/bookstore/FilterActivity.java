@@ -1,5 +1,6 @@
 package com.example.datafile4.bookstore;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -61,7 +62,26 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try {
+                    JSONObject toSend = new JSONObject();
+                    toSend.put(Constants.KEY_FILTER_LANGIDS,languageFragment.getSelectedItems());
+                    toSend.put(Constants.KEY_FILTER_GENREIDS,genreFragment.getSelectedItems());
+                    toSend.put(Constants.KEY_FILTER_LOWPRICE,priceRangeFragment.getLowPrice());
+                    toSend.put(Constants.KEY_FILTER_HIGHPRICE,priceRangeFragment.getHighPrice());
+                    //Search currently doesn't work. Sorry :(
+                    toSend.put(Constants.KEY_FILTER_SEARCHTERMS,"");
+                    JSONObject pagination = new JSONObject();
+                    pagination.put(Constants.KEY_FILTER_PAGENUMBER,0);
+                    pagination.put(Constants.KEY_FILTER_PAGELENGTH,10);
+                    toSend.put("Pagination",pagination);
+                    String parsedJson = toSend.toString();
+                    //Sending to MainActivity
+                    Intent intent = new Intent(FilterActivity.this, MainActivity.class);
+                    intent.putExtra(Constants.KEY_FILTER_VALUES, parsedJson);
+                    startActivity(intent);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

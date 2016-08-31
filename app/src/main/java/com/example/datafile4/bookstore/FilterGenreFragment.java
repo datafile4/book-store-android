@@ -158,9 +158,16 @@ public class FilterGenreFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        currentSelectedItems.clear();
+        super.onStop();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        currentSelectedItems.clear();
     }
 
     /**
@@ -177,7 +184,12 @@ public class FilterGenreFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-    public List<Genre> getSelectedItems(){
-        return currentSelectedItems;
+    public List<Integer> getSelectedItems()  {
+        List <Integer> Ids = new ArrayList<>();
+        for(int i = 0;i<currentSelectedItems.size();i++){
+            Genre genre = currentSelectedItems.get(i);
+            Ids.add(genre.getGenreID());
+        }
+        return Ids;
     }
 }

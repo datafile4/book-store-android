@@ -4,9 +4,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+
+import com.example.datafile4.bookstore.Config.Constants;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -26,6 +33,9 @@ public class FilterPriceRangeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private EditText highPriceText;
+    private EditText lowPriceText;
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,16 +68,22 @@ public class FilterPriceRangeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_filter_price_range, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_filter_price_range, container, false);
+        highPriceText = (EditText)rootView.findViewById(R.id.filter_highprice_picker);
+        lowPriceText = (EditText)rootView.findViewById(R.id.filter_lowprice_picker);
+
+        return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -102,7 +118,32 @@ public class FilterPriceRangeFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public int getHighPrice(){
+        int value;
+        if(highPriceText == null){
+            value = 9999;
+        } else {
+            String highText = highPriceText.getText().toString();
+            value = Integer.valueOf(highText);
+        }
+        return value;
+    }
+    public int getLowPrice(){
+        int value = 0;
+        try {
+            if(lowPriceText == null){
+                value = 0;
+            } else {
+                String lowText = lowPriceText.getText().toString();
+                value = Integer.valueOf(lowText);
+            }
+        } catch (NullPointerException e){
+            Log.e("Price error",e.getMessage());
+        }
+        return value;
+    }
+
 }

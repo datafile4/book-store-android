@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.example.datafile4.bookstore.Config.Constants;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements CartFragment.OnFragmentInteractionListener,AccountFragment.OnFragmentInteractionListener,BooksFragment.OnFragmentInteractionListener {
 
@@ -47,10 +53,35 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
         // Tie DrawerLayout events to the ActionBarToggle
         mDrawer.addDrawerListener(drawerToggle);
 
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(Constants.KEY_FILTER_VALUES);
+        if(message == null){
+            JSONObject defaultParameter = new JSONObject();
+            try {
+                defaultParameter.put(Constants.KEY_FILTER_LANGIDS,"");
+                defaultParameter.put(Constants.KEY_FILTER_GENREIDS,"");
+                defaultParameter.put(Constants.KEY_FILTER_LOWPRICE,0);
+                defaultParameter.put(Constants.KEY_FILTER_HIGHPRICE,9999);
+                defaultParameter.put(Constants.KEY_FILTER_SEARCHTERMS,"");
+                JSONObject pagination = new JSONObject();
+                pagination.put(Constants.KEY_FILTER_PAGENUMBER,0);
+                pagination.put(Constants.KEY_FILTER_PAGELENGTH,10);
+                defaultParameter.put("Pagination",pagination);
+                message = defaultParameter.toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+       // Log.v("FilterValues:",message+" ");
         //start the default fragment
         Class defaultFragmentClass = BooksFragment.class;
         try {
             Fragment defaultFragment = (Fragment)defaultFragmentClass.newInstance();
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.KEY_FILTER_VALUES, message);
+            defaultFragment.setArguments(bundle);
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().add(R.id.flContent, defaultFragment).commit();
         } catch (InstantiationException e) {

@@ -139,6 +139,12 @@ public class FilterLanguageFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        currentSelectedItems.clear();
+        super.onStop();
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
@@ -148,6 +154,7 @@ public class FilterLanguageFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
 
     @Override
     public void onDetach() {
@@ -166,11 +173,16 @@ public class FilterLanguageFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void onFragmentInteraction(Uri uri);
     }
-    public List<Language> getSelectedItems(){
-        return currentSelectedItems;
-    }
 
+    public List<Integer> getSelectedItems() {
+        List<Integer> Ids = new ArrayList<>();
+        for(int i = 0;i<currentSelectedItems.size();i++){
+            Language lang = currentSelectedItems.get(i);
+            Ids.add(lang.getId());
+        }
+        return Ids;
+    }
 }

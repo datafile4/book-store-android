@@ -22,19 +22,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilterReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FilterGenreFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FilterGenreFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FilterGenreFragment extends Fragment {
     private String urlGenres = Constants.HOST + "/api/BookStore/GetGenres";
     // TODO: Rename parameter arguments, choose names that match
@@ -45,9 +45,9 @@ public class FilterGenreFragment extends Fragment {
     protected GenreListAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
     private List<Genre> mGenres;
+    HashMap<Integer,Boolean> checks;
     private final String TAG = "FilterGenreRecyclerViewFragment";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -58,15 +58,6 @@ public class FilterGenreFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FilterGenreFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static FilterGenreFragment newInstance(String param1, String param2) {
         FilterGenreFragment fragment = new FilterGenreFragment();
         Bundle args = new Bundle();
@@ -85,39 +76,71 @@ public class FilterGenreFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         mGenres = new ArrayList<>();
+        checks = new HashMap<>();
+
+        File fileFilterGenresList = new File(getActivity().getDir("data",0), Constants.PREF_FILTER_GENRES);
+        File fileChecks = new File(getActivity().getDir("data",0),Constants.PREF_FILTER_GENRESCHECKS);
+
+        try {
+            ObjectInputStream inputStream1 = new ObjectInputStream(new FileInputStream(fileFilterGenresList));
+            mGenres = (ArrayList<Genre>)inputStream1.readObject();
+            Log.v("GenresFragment",String.valueOf(mGenres.size()));
+            if(fileChecks.exists()){
+                ObjectInputStream inputStream2 = new ObjectInputStream(new FileInputStream(fileChecks));
+                checks = (HashMap<Integer,Boolean>)inputStream2.readObject();
+                inputStream2.close();
+            } else {
+                for (int i = 0; i<mGenres.size(); i++){
+                    checks.put(mGenres.get(i).getGenreID(),false);
+                }
+            }
+            inputStream1.close();
+
+        }catch (IOException e){
+            Log.e("Serialize",e.getMessage());
+        } catch (ClassNotFoundException e){
+            Log.e("Serialize",e.getMessage());
+        }
+
+        for(int i = 0; i<mGenres.size(); i++){
+            mGenres.get(i).setSelected(checks.get(mGenres.get(i).getGenreID()));
+        }
+
         mAdapter = new GenreListAdapter(getActivity(), mGenres, new GenreListAdapter.OnItemCheckListener() {
             @Override
             public void onItemCheck(Genre genre) {
                 currentSelectedItems.add(genre);
+                checks.put(genre.getGenreID(),true);
             }
 
             @Override
             public void onItemUncheck(Genre genre) {
                 currentSelectedItems.remove(genre);
+                checks.put(genre.getGenreID(),false);
             }
         });
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlGenres, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                //HashMap<Integer,String> genres = new HashMap<>();
-                for(int i = 0 ;i<response.length();i++){
-                    try {
-                        JSONObject object = response.getJSONObject(i);
-                        mGenres.add(new Genre(object.getInt(Constants.KEY_ID), object.getString("Name")));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                mAdapter.updateList(mGenres);
-            }
-        }, new Response.ErrorListener(){
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Volley error",error.getMessage());
-            }
-        });
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlGenres, null, new Response.Listener<JSONArray>() {
+//            @Override
+//            public void onResponse(JSONArray response) {
+//                //HashMap<Integer,String> genres = new HashMap<>();
+//                for(int i = 0 ;i<response.length();i++){
+//                    try {
+//                        JSONObject object = response.getJSONObject(i);
+//                        mGenres.add(new Genre(object.getInt(Constants.KEY_ID), object.getString("Name")));
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                mAdapter.updateList(mGenres);
+//            }
+//        }, new Response.ErrorListener(){
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.e("Volley error",error.getMessage());
+//            }
+//        });
+//        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 
     @Override
@@ -159,7 +182,13 @@ public class FilterGenreFragment extends Fragment {
 
     @Override
     public void onStop() {
+//        HashMap<Integer,Boolean> checks = new HashMap<>();
+//        for(int i = 0; i<mGenres.size(); i++){
+//            checks.put(mGenres.get(i).getGenreID(),mGenres.get(i).isSelected());
+//        }
+        CommonMethods.writeDataFile(Constants.PREF_FILTER_GENRESCHECKS,getActivity(),checks);
         currentSelectedItems.clear();
+        mGenres.clear();
         super.onStop();
     }
 
@@ -170,16 +199,6 @@ public class FilterGenreFragment extends Fragment {
         currentSelectedItems.clear();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

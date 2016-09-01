@@ -10,6 +10,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 /**
  * Created by datafile4 on 8/15/16.
  */
@@ -37,5 +42,17 @@ public class CommonMethods {
             e.printStackTrace();
         }
         return defaultParameter.toString();
+    }
+
+    public static void writeDataFile(String filename, Context context, Object object){
+        File file = new File(context.getDir("data", 0), filename);
+        try {
+            ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file,false));
+            outputStream.writeObject(object);
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }

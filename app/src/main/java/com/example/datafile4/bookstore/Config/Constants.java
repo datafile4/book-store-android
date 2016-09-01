@@ -19,7 +19,7 @@ public class Constants {
     public static final String KEY_PASSWORD = "Password";
     public static final String KEY_PAGELENGTH = "pagelength";
     public static final String KEY_PAGENUMBER = "pagenumber";
-    public static final String HOST = "https://amiraslan.azurewebsites.net";
+    public static final String HOST = "https://amiraslan.azurewebsites.net/";
 
     public static final String KEY_FILTER_LANGIDS="LangIDs";
     public static final String KEY_FILTER_GENREIDS="GenreIDs";
@@ -30,6 +30,10 @@ public class Constants {
     public static final String KEY_FILTER_PAGENUMBER="PageNumber";
     public static final String KEY_FILTER_PAGELENGTH="PageLength";
     public static final String KEY_FILTER_VALUES = "filtervalues";
-    public static final String filterRequestValues = "{'LangIDs':[], 'GenreIDs':[],  'LowPrice':0,  'HighPrice':999,  'SearchTerms':[],  'Pagination':{ 'PageNumber':0,    'PageLength':10  }}";
+    //public static final String filterRequestValues = "{'LangIDs':[], 'GenreIDs':[],  'LowPrice':0,  'HighPrice':999,  'SearchTerms':[],  'Pagination':{ 'PageNumber':0,    'PageLength':10  }}";
     public static final String PREF = "user_data";
+    public static final String PREF_FILTER = "filter_data";
+    public static final String PREF_FILTER_GENRES = "genres";
+    public static final String PREF_FILTER_GENRESCHECKS = "genresChecks";
+    public static final String PREF_FILTER_LANGS = "langs";
 }

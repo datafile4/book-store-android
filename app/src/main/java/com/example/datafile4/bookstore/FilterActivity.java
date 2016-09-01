@@ -1,5 +1,6 @@
 package com.example.datafile4.bookstore;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -59,27 +60,12 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
 
         tabLayout = (TabLayout) findViewById(R.id.filter_tabs);
         tabLayout.setupWithViewPager(viewPager);
-
+        final Activity activity = this;
         //Confirm floating button onclick
         FloatingActionButton confirmButton = (FloatingActionButton) findViewById(R.id.filter_confirm_floatingbutton);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-//                    JSONObject toSend = new JSONObject();
-//                    toSend.put(Constants.KEY_FILTER_LANGIDS,languageFragment.getSelectedItems());
-//                    toSend.put(Constants.KEY_FILTER_GENREIDS,genreFragment.getSelectedItems());
-//                    toSend.put(Constants.KEY_FILTER_LOWPRICE,priceRangeFragment.getLowPrice());
-//                    toSend.put(Constants.KEY_FILTER_HIGHPRICE,priceRangeFragment.getHighPrice());
-//                    //Search currently doesn't work. Sorry :(
-//                    toSend.put(Constants.KEY_FILTER_SEARCHTERMS,new JSONArray());
-//                    JSONObject pagination = new JSONObject();
-//                    pagination.put(Constants.KEY_FILTER_PAGENUMBER,0);
-//                    pagination.put(Constants.KEY_FILTER_PAGELENGTH,30);
-//                    toSend.put("Pagination",pagination);
-//                    String parsedJson = toSend.toString();
-//                    //Store filter string in SharedPreferences
-
                 String parsedJson = CommonMethods.createFilterJSONString(languageFragment.getSelectedItems(),
                         genreFragment.getSelectedItems(), priceRangeFragment.getLowPrice(), priceRangeFragment.getHighPrice(),
                         new JSONArray(), 0, 30);
@@ -89,9 +75,9 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
                 editor.commit();
                 Intent intent = new Intent(FilterActivity.this, MainActivity.class);
                 //intent.putExtra(Constants.KEY_FILTER_VALUES, parsedJson);
-                startActivity(intent);
-            }
+                activity.finish();
 
+            }
         });
     }
 
@@ -112,7 +98,6 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
         languageFragment = new FilterLanguageFragment();
         genreFragment = new FilterGenreFragment();
         priceRangeFragment = new FilterPriceRangeFragment();
-
         adapter.addFragment(genreFragment, getString(R.string.genre2));
         adapter.addFragment(languageFragment, getString(R.string.language2));
         adapter.addFragment(priceRangeFragment, getString(R.string.price));

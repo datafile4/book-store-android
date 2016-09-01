@@ -31,7 +31,8 @@
             android:name=".BookActivity"
             android:theme="@style/AppTheme.ActionBar.Transparent" />
         <activity android:name=".FilterActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:noHistory="true">
 
         </activity>
     </application>

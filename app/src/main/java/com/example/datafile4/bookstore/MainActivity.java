@@ -23,11 +23,22 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.datafile4.bookstore.Config.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CartFragment.OnFragmentInteractionListener,AccountFragment.OnFragmentInteractionListener,BooksFragment.OnFragmentInteractionListener {
 
@@ -36,6 +47,10 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
     private String PREF = "user_data";
+    private String genresUrl = Constants.HOST + "api/BookStore/GetGenres";
+    private String langsUrl = Constants.HOST + "api/BookStore/GetLanguages";
+    private List<Genre> mGenres;
+    private List<Language> mLanguages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +63,67 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
             Intent intent = new Intent(MainActivity.this,Login.class);
             startActivity(intent);
         }
+
+        mGenres = new ArrayList<>();
+        mLanguages = new ArrayList<>();
+
+        //we will fetch information for filter
+        JsonArrayRequest filterGenresRequest = new JsonArrayRequest(genresUrl, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for(int i = 0 ;i<response.length();i++){
+                    try {
+                        JSONObject object = response.getJSONObject(i);
+                        mGenres.add(new Genre(object.getInt(Constants.KEY_ID), object.getString("Name")));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                CommonMethods.writeDataFile(Constants.PREF_FILTER_GENRES,getApplicationContext(),mGenres);
+                mGenres.clear();
+                Log.v("GenresMain",String.valueOf(mGenres.size()));
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("FilterOptionsFetch",error.getMessage());
+            }
+        });
+        MySingleton.getInstance(MainActivity.this).addToRequestQueue(filterGenresRequest);
+
+        //we will fetch information for filter
+        JsonArrayRequest filterLanguagesRequest = new JsonArrayRequest(langsUrl, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for(int i = 0 ;i<response.length();i++){
+                    try {
+                        JSONObject object = response.getJSONObject(i);
+                        mLanguages.add(new Language(object.getInt(Constants.KEY_ID), object.getString("Name")));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                File file = new File(getDir("data", MODE_PRIVATE), "langs");
+                try {
+                    ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file,false));
+                    outputStream.writeObject(mLanguages);
+                    outputStream.flush();
+                    outputStream.close();
+                } catch (IOException e){
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("FilterOptionsFetch",error.getMessage());
+            }
+        });
+
+        MySingleton.getInstance(MainActivity.this).addToRequestQueue(filterGenresRequest);
+        MySingleton.getInstance(MainActivity.this).addToRequestQueue(filterLanguagesRequest);
+
         //Set a Toolbar to replace the ActionBar
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -178,6 +254,8 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putString(Constants.KEY_FILTER_VALUES,CommonMethods.createFilterJSONString(new JSONArray(),
                 new JSONArray(),0,9999,new JSONArray(),0,30));
+        File fileChecks = new File(getDir("data",0),Constants.PREF_FILTER_GENRESCHECKS);
+        boolean deleted = fileChecks.delete();
         editor.commit();
         super.onDestroy();
     }

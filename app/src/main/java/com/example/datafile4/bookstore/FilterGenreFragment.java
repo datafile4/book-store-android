@@ -188,7 +188,6 @@ public class FilterGenreFragment extends Fragment {
 //        }
         CommonMethods.writeDataFile(Constants.PREF_FILTER_GENRESCHECKS,getActivity(),checks);
         currentSelectedItems.clear();
-        mGenres.clear();
         super.onStop();
     }
 
@@ -200,7 +199,6 @@ public class FilterGenreFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
     public JSONArray getSelectedItems()  {

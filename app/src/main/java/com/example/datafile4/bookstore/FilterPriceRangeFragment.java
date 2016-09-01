@@ -15,27 +15,26 @@ import com.example.datafile4.bookstore.Config.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.HashMap;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FilterPriceRangeFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FilterPriceRangeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FilterPriceRangeFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+    private static final int count = 2;
+    private HashMap<Integer,String> values;
     private String mParam1;
     private String mParam2;
 
     private EditText highPriceText;
     private EditText lowPriceText;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -43,15 +42,6 @@ public class FilterPriceRangeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FilterPriceRangeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static FilterPriceRangeFragment newInstance(String param1, String param2) {
         FilterPriceRangeFragment fragment = new FilterPriceRangeFragment();
         Bundle args = new Bundle();
@@ -68,6 +58,7 @@ public class FilterPriceRangeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        values = new HashMap<>();
 
 
     }
@@ -79,6 +70,20 @@ public class FilterPriceRangeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_filter_price_range, container, false);
         highPriceText = (EditText)rootView.findViewById(R.id.filter_highprice_picker);
         lowPriceText = (EditText)rootView.findViewById(R.id.filter_lowprice_picker);
+
+        File file = new File(getActivity().getDir("data",0),Constants.PREF_FILTER_PRICERANGEVALUES);
+        if(file.exists()){
+            try {
+                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
+                values = (HashMap<Integer,String>)objectInputStream.readObject();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            lowPriceText.setText(values.get(0));
+            highPriceText.setText(values.get(1));
+        }
 
         return rootView;
     }
@@ -102,21 +107,20 @@ public class FilterPriceRangeFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        values.put(0,lowPriceText.getText().toString());
+        values.put(1,highPriceText.getText().toString());
+        CommonMethods.writeDataFile(Constants.PREF_FILTER_PRICERANGEVALUES,getActivity(),values);
+        super.onStop();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }

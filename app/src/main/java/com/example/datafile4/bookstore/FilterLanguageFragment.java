@@ -22,7 +22,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -40,7 +45,7 @@ public class FilterLanguageFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+
     private String mParam1;
     private String mParam2;
 
@@ -49,6 +54,7 @@ public class FilterLanguageFragment extends Fragment {
     protected LanguageListAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
     private List<Language> mLanguages;
+    private HashMap<Integer,Boolean> checks;
     private static final String TAG = "FilterLanguageRecyclerViewFragment";
     private static List<Language> currentSelectedItems = new ArrayList<>();
     private OnFragmentInteractionListener mListener;
@@ -57,15 +63,6 @@ public class FilterLanguageFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FilterLanguageFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static FilterLanguageFragment newInstance(String param1, String param2) {
         FilterLanguageFragment fragment = new FilterLanguageFragment();
         Bundle args = new Bundle();
@@ -83,39 +80,71 @@ public class FilterLanguageFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         mLanguages = new ArrayList<>();
+        checks = new HashMap<>();
+
+        File fileFilterGenresList = new File(getActivity().getDir("data",0), Constants.PREF_FILTER_LANGS);
+        File fileChecks = new File(getActivity().getDir("data",0),Constants.PREF_FILTER_LANGSCHECKS);
+        try {
+            ObjectInputStream inputStream1 = new ObjectInputStream(new FileInputStream(fileFilterGenresList));
+            mLanguages = (ArrayList<Language>)inputStream1.readObject();
+            Log.v("GenresFragment",String.valueOf(mLanguages.size()));
+            if(fileChecks.exists()){
+                ObjectInputStream inputStream2 = new ObjectInputStream(new FileInputStream(fileChecks));
+                checks = (HashMap<Integer,Boolean>)inputStream2.readObject();
+                inputStream2.close();
+            } else {
+                for (int i = 0; i<mLanguages.size(); i++){
+                    checks.put(mLanguages.get(i).getId(),false);
+                }
+            }
+            inputStream1.close();
+
+        }catch (IOException e){
+            Log.e("Serialize",e.getMessage());
+        } catch (ClassNotFoundException e){
+            Log.e("Serialize",e.getMessage());
+        }
+
+
+        for(int i = 0; i<mLanguages.size(); i++){
+            mLanguages.get(i).setSelected(checks.get(mLanguages.get(i).getId()));
+        }
+
         mAdapter = new LanguageListAdapter(getActivity(), mLanguages, new LanguageListAdapter.OnItemCheckListener() {
             @Override
             public void onItemCheck(Language language) {
                 currentSelectedItems.add(language);
+                checks.put(language.getId(),true);
             }
 
             @Override
             public void onItemUncheck(Language language) {
                 currentSelectedItems.remove(language);
+                checks.put(language.getId(),false);
             }
         });
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlLangs, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                //HashMap<Integer,String> genres = new HashMap<>();
-                for(int i = 0 ;i<response.length();i++){
-                    try {
-                        JSONObject object = response.getJSONObject(i);
-                        mLanguages.add(new Language(object.getInt(Constants.KEY_ID), object.getString("Name")));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                mAdapter.updateList(mLanguages);
-            }
-        }, new Response.ErrorListener(){
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Volley error",error.getMessage());
-            }
-        });
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
+//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlLangs, null, new Response.Listener<JSONArray>() {
+//            @Override
+//            public void onResponse(JSONArray response) {
+//                //HashMap<Integer,String> genres = new HashMap<>();
+//                for(int i = 0 ;i<response.length();i++){
+//                    try {
+//                        JSONObject object = response.getJSONObject(i);
+//                        mLanguages.add(new Language(object.getInt(Constants.KEY_ID), object.getString("Name")));
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                mAdapter.updateList(mLanguages);
+//            }
+//        }, new Response.ErrorListener(){
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.e("Volley error",error.getMessage());
+//            }
+//        });
+//        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonArrayRequest);
     }
 
     @Override
@@ -142,6 +171,7 @@ public class FilterLanguageFragment extends Fragment {
     @Override
     public void onStop() {
         currentSelectedItems.clear();
+        CommonMethods.writeDataFile(Constants.PREF_FILTER_LANGSCHECKS,getActivity(),checks);
         super.onStop();
     }
 

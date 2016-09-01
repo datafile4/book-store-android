@@ -1,9 +1,11 @@
 package com.example.datafile4.bookstore;
 
+import java.io.Serializable;
+
 /**
  * Created by datafile4 on 8/29/16.
  */
-public class Language {
+public class Language implements Serializable{
     private int mID;
     private String mLanguage;
     private boolean selected;

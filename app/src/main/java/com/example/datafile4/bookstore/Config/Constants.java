@@ -36,4 +36,5 @@ public class Constants {
     public static final String PREF_FILTER_GENRES = "genres";
     public static final String PREF_FILTER_GENRESCHECKS = "genresChecks";
     public static final String PREF_FILTER_LANGS = "langs";
+    public static final String PREF_FILTER_LANGSCHECKS = "langsChecks";
 }

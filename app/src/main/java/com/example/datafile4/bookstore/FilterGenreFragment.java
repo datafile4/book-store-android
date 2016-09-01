@@ -45,7 +45,7 @@ public class FilterGenreFragment extends Fragment {
     protected GenreListAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
     private List<Genre> mGenres;
-    HashMap<Integer,Boolean> checks;
+    private HashMap<Integer,Boolean> checks;
     private final String TAG = "FilterGenreRecyclerViewFragment";
 
     private String mParam1;

@@ -104,15 +104,8 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
                         e.printStackTrace();
                     }
                 }
-                File file = new File(getDir("data", MODE_PRIVATE), "langs");
-                try {
-                    ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file,false));
-                    outputStream.writeObject(mLanguages);
-                    outputStream.flush();
-                    outputStream.close();
-                } catch (IOException e){
-
-                }
+                CommonMethods.writeDataFile(Constants.PREF_FILTER_LANGS,getApplicationContext(),mLanguages);
+                mLanguages.clear();
             }
         }, new Response.ErrorListener() {
             @Override

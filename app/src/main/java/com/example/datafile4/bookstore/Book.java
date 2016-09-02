@@ -10,6 +10,7 @@ public class Book {
     private String mImageUrl;
     private int mId;
 
+
     public Book(int Id, String name, String imgUrl){
         mName = name;
         mId = Id;

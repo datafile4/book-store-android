@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class BooksFragment extends Fragment {
     // public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-    private String url = "https://amiraslan.azurewebsites.net/api/BookStore/GetFilteredBooks";
+    private String url = Constants.HOST + "/api/BookStore/GetFilteredBooks";
     private static String imgUrl = "https://amiraslan.azurewebsites.net/";
     int bookId;
     private ArrayList<Book> books;
@@ -190,7 +190,7 @@ public class BooksFragment extends Fragment {
     }
 
     public void makeRequest(){
-         String message = settings.getString(Constants.KEY_FILTER_VALUES, "");
+        String message = settings.getString(Constants.KEY_FILTER_VALUES, "");
         //String message = "{'LangIDs':[], 'GenreIDs':[],  'LowPrice':0,  'HighPrice':999,  'SearchTerms':[],  'Pagination':{ 'PageNumber':0,    'PageLength':10  }}";
 
         Log.v("FilterValuesFragment", message);

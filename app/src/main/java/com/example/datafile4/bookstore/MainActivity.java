@@ -272,11 +272,12 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
     public void logoutFromApp(){
         SharedPreferences sharedPrefs = getSharedPreferences(PREF,Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.clear();
+        editor.remove(Constants.KEY_COOKIE);
         editor.commit();
 
         Intent intent = new Intent(MainActivity.this,Login.class);
         startActivity(intent);
+        finish();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.datafile4.bookstore;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,8 +85,11 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder>{
         textView.setText(book.getBookName());
 
         final NetworkImageView image = holder.bookImage;
-        ImageLoader mImageLoader = MySingleton.getInstance(mContext).getImageLoader();
-        image.setImageUrl(book.getBookImgUrl(),mImageLoader);
+
+            ImageLoader mImageLoader = MySingleton.getInstance(mContext).getImageLoader();
+            image.setImageUrl(book.getBookImgUrl(),mImageLoader);
+            image.setErrorImageResId(R.drawable.defaultcover);
+
     }
 
     public void updateGrid(List<Book> books){

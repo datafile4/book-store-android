@@ -100,8 +100,6 @@ public class Login extends AppCompatActivity {
                                     editor.putString(Constants.KEY_COOKIE,m.group(1));
                                 }
                                 editor.putString(Constants.KEY_USERNAME,username);
-                                editor.putString(Constants.KEY_FILTER_VALUES,CommonMethods.createFilterJSONString(new JSONArray(),
-                                        new JSONArray(),0,9999,new JSONArray(),0,30));
                                 editor.apply();
                                 Intent intent = new Intent(Login.this,MainActivity.class);
                                 startActivity(intent);

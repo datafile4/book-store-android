@@ -24,6 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.datafile4.bookstore.Config.Constants;
@@ -36,15 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link BooksFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link BooksFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class BooksFragment extends Fragment {
     // public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     private String url = "https://amiraslan.azurewebsites.net/api/BookStore/GetFilteredBooks";
@@ -60,6 +52,7 @@ public class BooksFragment extends Fragment {
     protected BookAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
     private JSONArray responseArray;
+    private SharedPreferences settings;
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "filtervalues";
@@ -80,7 +73,7 @@ public class BooksFragment extends Fragment {
         BooksFragment fragment = new BooksFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, message);
-      //  args.putString(ARG_PARAM2, param2);
+        //  args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -90,63 +83,11 @@ public class BooksFragment extends Fragment {
         super.onCreate(savedInstanceState);
         books = new ArrayList<Book>();
         mAdapter = new BookAdapter(getActivity(), books);
+        settings =  this.getActivity().getSharedPreferences(Constants.PREF, Context.MODE_PRIVATE);
         //Message from MainActivity
-       // String message = getArguments().getString(Constants.KEY_FILTER_VALUES);
+        // String message = getArguments().getString(Constants.KEY_FILTER_VALUES);
 
         //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences sharedPrefs = this.getActivity().getSharedPreferences(Constants.PREF,Context.MODE_PRIVATE);
-        String message = sharedPrefs.getString(Constants.KEY_FILTER_VALUES,"");
-       // String message = "{'LangIDs':[], 'GenreIDs':[],  'LowPrice':0,  'HighPrice':999,  'SearchTerms':[],  'Pagination':{ 'PageNumber':0,    'PageLength':10  }}";
-
-        Log.v("FilterValuesFragment",message);
-        JSONObject queryParameter = null;
-        try {
-            queryParameter = new JSONObject(message);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        //Volley request
-        CustomJsonArrayRequest jsonObjectRequest = new CustomJsonArrayRequest(Request.Method.POST, url,queryParameter, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                JSONObject jsonObject;
-                int id;
-                String bookName;
-                String Url;
-
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        jsonObject = response.getJSONObject(i);
-                        id = jsonObject.getInt(Constants.KEY_ID);
-                        bookName = jsonObject.getString(Constants.KEY_BOOKNAME);
-                        //Url = imgUrl + jsonObject.getString(Constants.KEY_IMG_URL);
-                        Url = "http://starecat.com/content/wp-content/uploads/copying-and-pasting-from-stack-overflow-essential-book-oreilly.jpg";//
-                        //I receive urls in images/img.jpg format
-                        books.add(new Book(id, bookName, Url));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                mAdapter.updateGrid(books);
-               // progressBar.setVisibility(ProgressBar.INVISIBLE);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("ErrorVolley:","Something is bad");
-            }
-        });
-// {
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                HashMap<String, String> params = new HashMap<>();
-//
-//                params.put(Constants.KEY_PAGENUMBER, String.valueOf(0));
-//                params.put(Constants.KEY_PAGELENGTH, String.valueOf(10));
-//                return params;
-//            }
-//        };
-        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonObjectRequest);
 
         mAdapter.setOnItemClickListener(new BookAdapter.ClickListener() {
             @Override
@@ -166,6 +107,7 @@ public class BooksFragment extends Fragment {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -175,11 +117,11 @@ public class BooksFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_books, container, false);
         rootView.setTag(TAG);
 
-        com.github.clans.fab.FloatingActionButton floatingActionButton = ( com.github.clans.fab.FloatingActionButton) rootView.findViewById(R.id.books_floatingbutton);
+        com.github.clans.fab.FloatingActionButton floatingActionButton = (com.github.clans.fab.FloatingActionButton) rootView.findViewById(R.id.books_floatingbutton);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),FilterActivity.class);
+                Intent intent = new Intent(getActivity(), FilterActivity.class);
                 startActivity(intent);
             }
         });
@@ -187,9 +129,9 @@ public class BooksFragment extends Fragment {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvBooks);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
-//        progressBar = (ProgressBar)rootView.findViewById(R.id.progressBarBooks);
-//        progressBar.setVisibility(ProgressBar.INVISIBLE);
-        //progressBar.setVisibility(ProgressBar.VISIBLE);
+        progressBar = (ProgressBar)rootView.findViewById(R.id.booksProgressBar);
+
+
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(mLayoutManager);
 //        mAdapter.updateGrid(books);
@@ -198,7 +140,6 @@ public class BooksFragment extends Fragment {
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -218,24 +159,75 @@ public class BooksFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onStart() {
+        books.clear();
+        mAdapter.updateGrid(books);
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+        makeRequest();
+        super.onStart();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         books.clear();
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void makeRequest(){
+         String message = settings.getString(Constants.KEY_FILTER_VALUES, "");
+        //String message = "{'LangIDs':[], 'GenreIDs':[],  'LowPrice':0,  'HighPrice':999,  'SearchTerms':[],  'Pagination':{ 'PageNumber':0,    'PageLength':10  }}";
+
+        Log.v("FilterValuesFragment", message);
+        JSONObject queryParameter = null;
+        try {
+            queryParameter = new JSONObject(message);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Volley request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, queryParameter, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONObject jsonObject;
+                int id;
+                String bookName;
+                String Url;
+                try {
+                    JSONArray responseArray = response.getJSONArray("Books");
+
+                    for (int i = 0; i < responseArray.length(); i++) {
+
+                        jsonObject = responseArray.getJSONObject(i);
+                        id = jsonObject.getInt(Constants.KEY_ID);
+                        bookName = jsonObject.getString(Constants.KEY_BOOKNAME);
+                        Url = jsonObject.getString(Constants.KEY_IMG_URL);
+                        //Url = "http://starecat.com/content/wp-content/uploads/copying-and-pasting-from-stack-overflow-essential-book-oreilly.jpg";//
+                        //I receive urls in images/img.jpg format
+                        books.add(new Book(id, bookName, Url));
+                    }
+                    progressBar.setVisibility(ProgressBar.INVISIBLE);
+                } catch (JSONException e) {
+                    e.getMessage();
+                }
+                mAdapter.updateGrid(books);
+                // progressBar.setVisibility(ProgressBar.INVISIBLE);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("ErrorVolley:", error.getMessage());
+            }
+        });
+        MySingleton.getInstance(getActivity()).addToRequestQueue(jsonObjectRequest);
     }
 }

@@ -51,18 +51,34 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
     private String langsUrl = Constants.HOST + "api/BookStore/GetLanguages";
     private List<Genre> mGenres;
     private List<Language> mLanguages;
+    private SharedPreferences settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //delete past filters
+        File fileChecks = new File(getDir("data",0),Constants.PREF_FILTER_GENRESCHECKS);
+        boolean deleted = fileChecks.delete();
 
-        SharedPreferences settings = getSharedPreferences(Constants.PREF,Context.MODE_PRIVATE);
+        fileChecks = new File(getDir("data",0),Constants.PREF_FILTER_LANGSCHECKS);
+        deleted = fileChecks.delete();
+
+        fileChecks = new File(getDir("data",0),Constants.PREF_FILTER_PRICERANGEVALUES);
+        deleted = fileChecks.delete();
+        settings = getSharedPreferences(Constants.PREF,Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(Constants.KEY_FILTER_VALUES,CommonMethods.createFilterJSONString(new JSONArray(),
+                new JSONArray(),0,999,new JSONArray(),0,30));
+        editor.commit();
+
         //if setting does not exists, getBoolean will return false
         if(!settings.contains(Constants.KEY_COOKIE)){
             Intent intent = new Intent(MainActivity.this,Login.class);
             startActivity(intent);
         }
+
 
         mGenres = new ArrayList<>();
         mLanguages = new ArrayList<>();
@@ -230,6 +246,28 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
     public void onFragmentInteraction(Uri uri){
 
     }
+
+    @Override
+    protected void onStart() {
+        if(!settings.contains(Constants.KEY_FILTER_VALUES)){
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(Constants.KEY_FILTER_VALUES,CommonMethods.createFilterJSONString(new JSONArray(),
+                    new JSONArray(),0,999,new JSONArray(),0,30));
+            editor.commit();
+        }
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        SharedPreferences.Editor editor = settings.edit();
+        editor.remove(Constants.KEY_FILTER_VALUES);
+        //editor.commit();
+        super.onStop();
+    }
+
+
+
     //Method that performs logout from app
     public void logoutFromApp(){
         SharedPreferences sharedPrefs = getSharedPreferences(PREF,Context.MODE_PRIVATE);
@@ -243,13 +281,7 @@ public class MainActivity extends AppCompatActivity implements CartFragment.OnFr
 
     @Override
     protected void onDestroy() {
-        SharedPreferences sharedPrefs = getSharedPreferences(Constants.PREF,Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(Constants.KEY_FILTER_VALUES,CommonMethods.createFilterJSONString(new JSONArray(),
-                new JSONArray(),0,9999,new JSONArray(),0,30));
-        File fileChecks = new File(getDir("data",0),Constants.PREF_FILTER_GENRESCHECKS);
-        boolean deleted = fileChecks.delete();
-        editor.commit();
+
         super.onDestroy();
     }
 }

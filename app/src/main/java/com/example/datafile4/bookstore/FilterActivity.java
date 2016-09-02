@@ -73,7 +73,12 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
                 SharedPreferences.Editor editor = sharedPrefs.edit();
                 editor.putString(Constants.KEY_FILTER_VALUES, parsedJson);
                 editor.commit();
+                FragmentManager fm = getSupportFragmentManager();
+                BooksFragment booksFragment = (BooksFragment)fm.findFragmentById(R.id.nav_books_fragment);
+
+
                 Intent intent = new Intent(FilterActivity.this, MainActivity.class);
+
                 //intent.putExtra(Constants.KEY_FILTER_VALUES, parsedJson);
                 activity.finish();
 

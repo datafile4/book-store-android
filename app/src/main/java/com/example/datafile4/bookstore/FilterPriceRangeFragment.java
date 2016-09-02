@@ -126,7 +126,7 @@ public class FilterPriceRangeFragment extends Fragment {
     }
 
     public int getHighPrice(){
-        int value = 9999;
+        int value = 999;
         if(highPriceText != null){
             String price = highPriceText.getText().toString();
             if(!price.isEmpty()){

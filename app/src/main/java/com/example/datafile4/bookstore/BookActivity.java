@@ -52,10 +52,11 @@ public class BookActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     setElements(response);
+                    new DownloadImageTask((ImageView)findViewById(R.id.outside_imageview)).execute(response.getString(Constants.KEY_IMG_URL));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                new DownloadImageTask((ImageView)findViewById(R.id.outside_imageview)).execute("http://i.imgur.com/v8hVVdF.jpg");
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -103,6 +104,7 @@ public class BookActivity extends AppCompatActivity {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
+                mIcon11 = BitmapFactory.decodeResource(getResources(),R.drawable.defaultcover);
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
@@ -122,7 +124,12 @@ public class BookActivity extends AppCompatActivity {
                 }
             });
         }
+
     }
 
-
+    @Override
+    protected void onDestroy() {
+        bmImage.setImageBitmap(null);
+        super.onDestroy();
+    }
 }

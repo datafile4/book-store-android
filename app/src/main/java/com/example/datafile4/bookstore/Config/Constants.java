@@ -10,7 +10,7 @@ public class Constants {
     public static final String KEY_GENRE = "Genre";
     public static final String KEY_AUTHOR = "Author";
     public static final String KEY_LANG = "Language";
-    public static final String KEY_PRICE = "Pirce";
+    public static final String KEY_PRICE = "Price";
     public static final String KEY_FIRSTNAME="FirstName";
     public static final String KEY_LASTNAME="LastName";
     public static final String KEY_USERNAME="Username";

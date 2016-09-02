@@ -2,6 +2,7 @@ package com.example.datafile4.bookstore;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -10,8 +11,11 @@ import android.os.Bundle;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -24,12 +28,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import com.example.datafile4.bookstore.Config.Constants;
 
 public class BookActivity extends AppCompatActivity {
     private String url = "http://amiraslan.azurewebsites.net/api/BookStore/GetBookInfo?id=";
+    private ProgressBar progressBar;
+    private ScrollView scrollView;
+    private Bitmap cover;
+    private File image;
 
     public static ImageView bmImage;
     @Override
@@ -45,6 +60,10 @@ public class BookActivity extends AppCompatActivity {
         Context context = getBaseContext();
         Intent intent = getIntent();
         int id = intent.getIntExtra(Constants.KEY_ID,0);
+        scrollView = (ScrollView)findViewById(R.id.bookScrollView);
+        scrollView.setVisibility(View.INVISIBLE);
+        progressBar = (ProgressBar)findViewById(R.id.bookActivityProgressBar);
+        progressBar.setVisibility(ProgressBar.VISIBLE);
         HashMap<String,Integer> params = new HashMap<String, Integer>();
         params.put(Constants.KEY_ID,id);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url+String.valueOf(id),null, new Response.Listener<JSONObject>() {
@@ -83,11 +102,14 @@ public class BookActivity extends AppCompatActivity {
         TextView author = (TextView)findViewById(R.id.author_name);
         TextView genre = (TextView)findViewById(R.id.genre_text);
         TextView language = (TextView)findViewById(R.id.language_text);
+        TextView bookPrice = (TextView)findViewById(R.id.book_price_number);
 
         language.setText(getString(R.string.language,response.getString(Constants.KEY_LANG)));
+        bookPrice.setText(getString(R.string.book_price, response.getInt(Constants.KEY_PRICE)));
         genre.setText(getString(R.string.genre,response.getString(Constants.KEY_GENRE)));
         bookName.setText(nameText);
         author.setText(getString(R.string.by, response.getString(Constants.KEY_AUTHOR)));
+
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
@@ -100,19 +122,48 @@ public class BookActivity extends AppCompatActivity {
         protected Bitmap doInBackground(String... urls) {
             String urldisplay = urls[0];
             Bitmap mIcon11 = null;
+
             try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
+//                InputStream in = new java.net.URL(urldisplay).openStream();
+//                BitmapFactory.Options options = new BitmapFactory.Options();
+//                options.inSampleSize = 2;
+//                mIcon11 = BitmapFactory.decodeStream(in,null,options);
+
+                BitmapFactory.Options o = new BitmapFactory.Options();
+                o.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream( new java.net.URL(urldisplay).openStream(), null, o);
+
+                // The new size we want to scale to
+                final int REQUIRED_SIZE=200;
+
+                // Find the correct scale value. It should be the power of 2.
+                int scale = 1;
+                while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                        o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+                    scale *= 2;
+                }
+
+                // Decode with inSampleSize
+                BitmapFactory.Options o2 = new BitmapFactory.Options();
+                o2.inSampleSize = scale;
+                mIcon11 = BitmapFactory.decodeStream(new java.net.URL(urldisplay).openStream(), null, o2);
             } catch (Exception e) {
                 mIcon11 = BitmapFactory.decodeResource(getResources(),R.drawable.defaultcover);
-                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            } catch (OutOfMemoryError e){
+                mIcon11 = BitmapFactory.decodeResource(getResources(),R.drawable.defaultcover);
                 e.printStackTrace();
             }
             return mIcon11;
         }
 
+
+
         protected void onPostExecute(Bitmap result) {
+
+
             bmImage.setImageBitmap(result);
+
             final RelativeLayout layout = (RelativeLayout)findViewById(R.id.inside_backgdound);
             Palette.from(result).generate(new Palette.PaletteAsyncListener() {
                 @Override
@@ -123,13 +174,23 @@ public class BookActivity extends AppCompatActivity {
                     }
                 }
             });
+            result = null;
+           // out = null;
+            progressBar.setVisibility(ProgressBar.INVISIBLE);
+            scrollView.setVisibility(View.VISIBLE);
         }
 
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
+//        cover.recycle();
         bmImage.setImageBitmap(null);
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
     }
 }

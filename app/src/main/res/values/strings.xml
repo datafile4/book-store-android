@@ -17,6 +17,7 @@
     <string name="logout">Logout</string>
     <string name="genre">Genre: %1$s</string>
     <string name="language">Language: %1$s</string>
+    <string name="book_price">$%1$s </string>
     <string name="language2">Language</string>
     <string name="by">by %1$s</string>
     <string name="add_to_cart">Add to Cart</string>

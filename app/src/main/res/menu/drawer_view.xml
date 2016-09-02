@@ -4,12 +4,15 @@
         android:id="@+id/top_nav">
         <item
             android:id="@+id/nav_account_fragment"
+            android:icon="@drawable/ic_account_box_black_24dp"
             android:title="@string/account"/>
         <item
             android:id="@+id/nav_books_fragment"
+            android:icon="@drawable/ic_library_books_black_24dp"
             android:title="@string/books"/>
         <item
             android:id="@+id/nav_cart_fragment"
+            android:icon="@drawable/ic_shopping_cart_black_24dp"
             android:title="@string/cart"/>
 
     </group>
@@ -17,6 +20,7 @@
         android:id="@+id/bottom_nav">
         <item
             android:id="@+id/nav_logout_fragment"
+            android:icon="@drawable/ic_exit_to_app_black_24dp"
             android:title="@string/logout"/>
     </group>
 </menu>

@@ -173,10 +173,16 @@ public class BooksFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        mAdapter.removeGrid();
+        super.onStop();
+    }
+
+    @Override
     public void onDetach() {
-        super.onDetach();
         books.clear();
         mListener = null;
+        super.onDetach();
     }
 
     public interface OnFragmentInteractionListener {
@@ -215,11 +221,11 @@ public class BooksFragment extends Fragment {
                         //I receive urls in images/img.jpg format
                         books.add(new Book(id, bookName, Url));
                     }
-                    progressBar.setVisibility(ProgressBar.INVISIBLE);
                 } catch (JSONException e) {
                     e.getMessage();
                 }
                 mAdapter.updateGrid(books);
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
                 // progressBar.setVisibility(ProgressBar.INVISIBLE);
             }
         }, new Response.ErrorListener() {

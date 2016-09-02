@@ -51,7 +51,7 @@ public class FilterActivity extends AppCompatActivity implements FilterGenreFrag
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
+        this.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
         getSupportActionBar().setTitle("Filter by");
         final Context context = getApplicationContext();
         //view pager for swipe

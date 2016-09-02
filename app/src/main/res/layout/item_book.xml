@@ -18,10 +18,9 @@
         android:layout_height="match_parent">
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/book_image"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="200dp"
             android:contentDescription="@string/book_name"
-            android:src="@drawable/bookcover"
             android:scaleType="fitXY" />
 
         <TextView
@@ -30,6 +29,7 @@
             android:layout_height="wrap_content"
             android:textSize="13sp"
             android:text="@string/book_name"
+            android:maxLength="20"
             android:gravity="center"
             android:layout_below="@+id/book_image"
             android:paddingBottom="8dp"
